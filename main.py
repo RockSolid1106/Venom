@@ -9,7 +9,6 @@ from replit import db
 import os
 from keep_alive import keep_alive
 #hello
-#comment
 keep_alive()
 print("This is the PRODUCTION version.")
 
