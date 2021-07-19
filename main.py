@@ -8,6 +8,7 @@ from tabulate import tabulate
 from replit import db
 import os
 from keep_alive import keep_alive
+
 keep_alive()
 
 print("This is the PRODUCTION version.")
