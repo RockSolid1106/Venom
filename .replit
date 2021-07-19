@@ -1,2 +1,2 @@
 language = "python3"
-run = "run=\"python main.py\" language=\"python3\" onBoot=\"echo Booting up!\"  [packager] afterInstall=\"date >> package_install_log\" ignoredPaths=[\".git\"] ignoredPackages=[\"run=\"run=python main.py\"run=\""
+run = "python3 main.py"

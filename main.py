@@ -8,8 +8,6 @@ from tabulate import tabulate
 from replit import db
 import os
 from keep_alive import keep_alive
-#hello
-#this is a comment because I am changing the code with VSCode with the help of GH.
 keep_alive()
 
 print("This is the PRODUCTION version.")
