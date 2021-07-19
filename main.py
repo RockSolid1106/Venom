@@ -12,6 +12,7 @@ from keep_alive import keep_alive
 keep_alive()
 #This is a change from VSCode to test the integration with GH.
 #I have made these changes from Repl.it.
+#This a change that I have made from VSC.
 print("This is the PRODUCTION version.")
 
 client = commands.Bot(command_prefix="!")
