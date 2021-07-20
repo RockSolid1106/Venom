@@ -257,7 +257,10 @@ async def on_ready():
 	print(discord.__version__)
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
-
+	pfp_path = "venom.png"
+	fp = open(pfp_path, 'rb')
+	pfp = fp.read()
+	await client.edit_profile(password=None, avatar=pfp)
 
 client.run(
     os.getenv("TOKEN")
