@@ -33,7 +33,7 @@ async def ping(ctx):
 ##############----Member Commands----#########
 
 #Make Moderator
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="!makemod <ID or @mention>")
 @commands.has_role("Owner")
 async def makemod(ctx, member: discord.Member):
 
