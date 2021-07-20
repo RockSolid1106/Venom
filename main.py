@@ -18,6 +18,7 @@ from tabulate import tabulate
 from replit import db
 import os
 from keep_alive import keep_alive
+from datetime import datetime
 print("Copyright © 2021  RockSolid1106. \n This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
 keep_alive()
 print("This is the PRODUCTION version.")
@@ -257,10 +258,11 @@ async def on_ready():
 	print(discord.__version__)
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
-	pfp_path = "venom.png"
+	pfp_path = "Venom-new.png"
 	fp = open(pfp_path, 'rb')
 	pfp = fp.read()
 	await client.user.edit(avatar=pfp)
+	print(datetime.now().time())
 
 client.run(
     os.getenv("TOKEN")
