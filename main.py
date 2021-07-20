@@ -33,7 +33,7 @@ async def ping(ctx):
 ##############----Member Commands----#########
 
 #Make Moderator
-@client.command(pass_context=True, description="!makemod <ID or @mention>", brief="Makes a user a Moderator. Can be only used by Owners.")
+@client.command(pass_context=True, description="This command can only be used by Server Owners.", brief="Makes a user a Moderator. Can be only used by Owners.")
 @commands.has_role("Owner")
 async def makemod(ctx, member: discord.Member):
 
@@ -47,7 +47,7 @@ async def makemod(ctx, member: discord.Member):
 	await ctx.send(embed=embed)
 
 #remove Moderator
-@client.command(pass_context=True, description="!removemod <ID or @mention>", brief="Removes the Moderator role from a user. Can only be used by Owners.")
+@client.command(pass_context=True, description="This command can only be used by Server Owners.", brief="Removes the Moderator role from a user")
 @commands.has_role("Owner")
 async def removemod(ctx, member: discord.Member):
 
@@ -61,7 +61,7 @@ async def removemod(ctx, member: discord.Member):
 	await ctx.send(embed=embed)
 
 #Give the Member Role
-@client.command(pass_context=True)
+@client.command(pass_context=True, description="This command gives the Member role to a user. The user then has access to send messages to channels. This command can only be used by Moderator+", brief="Gives the member role.")
 @commands.has_role("Moderator")
 async def makemember(ctx, member: discord.Member):
 
@@ -75,7 +75,7 @@ async def makemember(ctx, member: discord.Member):
 	await ctx.send(embed=embed)
 
 #Lock a channel
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Locks a channel", description="The reason field cannot be left blank if you are specifying a different channel. So, !lock #general would not work. \n !lock will lock the current channel. \n !lock \"<reason>\" will work and lock the current channel. \n Enclose the reason in double-quotes (\"\") \n This command can only be used by Moderator+.")
 @commands.has_role("Moderator")
 async def lock(ctx, reason=None, channel: discord.TextChannel=None):
 	channel = channel or ctx.channel
@@ -89,7 +89,7 @@ async def lock(ctx, reason=None, channel: discord.TextChannel=None):
 	await channel.send(embed=embed)
 
 #Unlock a Channel
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Unlocks a channel", description="This command can only be used by Moderator+. \n The channel field can be left empty if you want to unlock the current channel.")
 @commands.has_role("Moderator")
 async def unlock(ctx, channel: discord.TextChannel=None):
 	channel = channel or ctx.channel
@@ -121,7 +121,7 @@ def getbal(member):
 ############----Mute/Unmute----########
 
 #Mute a user
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Mutes a specified user", description="This command can only be used by Moderator+. \n Either the ID or @mention will work.")
 @commands.has_role("Moderator")
 async def mute(ctx, member: discord.Member, reason=None):
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
@@ -142,7 +142,7 @@ async def mute(ctx, member: discord.Member, reason=None):
 		await member.send(embed=embed)
 
 #Unmute a user
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Unmutes a specified user", description="This command can only be used by Moderator+. \n Either the ID or @mention will work.")
 @commands.has_role("Moderator")
 async def unmute(ctx, member: discord.Member):
 
@@ -160,7 +160,7 @@ async def unmute(ctx, member: discord.Member):
 ##############---Mute/Unmute End---############
 
 #Ban a user
-@client.command()
+@client.command(pass_context=True, brief="Bans a specified user", description="Use this command on your own discretion. A ban should be a last resort. Try using the mute/kick command before this command. Should the user commit a very grave crime, this command be used.")
 @commands.has_role("Moderator")
 async def ban(ctx, member: discord.Member = None, reason=None):
 	if member == None or member == ctx.message.author:
@@ -174,7 +174,7 @@ async def ban(ctx, member: discord.Member = None, reason=None):
 	await ctx.channel.send(f"{member} is banned!")
 
 #Kick a user
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
 async def kick(ctx, member: discord.Member):
 	try:
 			await member.kick(reason=None)
@@ -188,20 +188,20 @@ async def kick(ctx, member: discord.Member):
 ###############----Misc----##################
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Timepass")
 async def hello(ctx):
 	await ctx.send(f'Hello there {ctx.author.mention}, how are you doing?')
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Makes the bot send an embed in a specified channel.", description="Don't forget to use double-quotes for the title and description.")
 @commands.has_permissions(manage_messages=True)
-async def say(ctx, channel: discord.TextChannel, one, two):
+async def say(ctx, channel: discord.TextChannel, title, description):
     
-	embed = discord.Embed(title=one, description=two, color=0xFF0000)
+	embed = discord.Embed(title=title, description=description, color=0xFF0000)
 	await channel.send(embed=embed)
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="This command is under development.")
 async def bal(ctx, member: discord.Member=None):
 	member=member or ctx.author
 	await ctx.send(str(member)+"'s balance is: $"+str(getbal(member)))
@@ -212,7 +212,7 @@ async def bal(ctx, member: discord.Member=None):
 #######------misc-----#########
 
 ###################-------In game money--------####################
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Initializes a new user to the database")
 async def hi(ctx):
   matches = db.prefix(str(ctx.author))
   if str(ctx.author) in matches:
@@ -223,7 +223,7 @@ async def hi(ctx):
     await ctx.send("User Successfully initialized.")
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Still under development")
 @commands.has_role("Owner")
 async def addbal(ctx, amt, member: discord.Member):
 	member=member or ctx.author
@@ -235,8 +235,8 @@ async def addbal(ctx, amt, member: discord.Member):
 
 #######----test------######
 #report and send a message to the Mods
-@client.command(pass_context=True)
-async def report(ctx, member: discord.Member, reason=None, game_server=None):
+@client.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
+async def report(ctx, member: discord.Member, reason=None):
 	embed = (
         discord.Embed(
             title="Reported",
@@ -247,7 +247,7 @@ async def report(ctx, member: discord.Member, reason=None, game_server=None):
 	await ctx.send(embed=embed)
 	channel=client.get_channel(866506128103702529)
 	await channel.send(
-			f"{ctx.author} reported {member.name} \n **Reason**: {reason} \n **Game/Server**: {game_server}")
+			f"{ctx.author} reported {member.name} \n **Reason**: {reason} \n **Channel**: {ctx.channel}")
 ######---- test end -------#####
 
 
