@@ -83,7 +83,7 @@ async def lock(ctx, reason=None, channel: discord.TextChannel=None):
 	role=discord.utils.get(ctx.guild.roles, name="Member")
 	overwrite = channel.overwrites_for(role)
 	overwrite.send_messages = False
-	await channel.set_permissions(ctx.guild.default_role, overwrite=overwrite)
+	await channel.set_permissions(role, overwrite=overwrite)
 	embed=discord.Embed(
 	title="Channel Locked",
 	description="This channel was locked by **{0}** \n **Reason:** {1}".format(ctx.author.mention, reason), color=0xFF0000)
