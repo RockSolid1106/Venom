@@ -257,7 +257,7 @@ async def on_ready():
 	print(discord.__version__)
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
-	pfp_path = "venom.png"
+	pfp_path = "Venom-new.png"
 	fp = open(pfp_path, 'rb')
 	pfp = fp.read()
 	await client.user.edit(avatar=pfp)
