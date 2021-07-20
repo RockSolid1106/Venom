@@ -85,7 +85,7 @@ async def lock(ctx, reason=None, channel: discord.TextChannel=None):
 	await channel.set_permissions(role, overwrite=overwrite)
 	embed=discord.Embed(
 	title="Channel Locked",
-	description="This channel was locked by **{0}** \n **Reason:** {1}".format(ctx.author.mention, reason), color=0xFF0000)
+	description="This channel was locked by **{0}** \n **Reason:** {1} \n **This thread is now closed to further replies.**".format(ctx.author.mention, reason), color=0xFF0000)
 	await channel.send(embed=embed)
 
 #Unlock a Channel
