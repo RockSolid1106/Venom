@@ -260,7 +260,7 @@ async def on_ready():
 	pfp_path = "venom.png"
 	fp = open(pfp_path, 'rb')
 	pfp = fp.read()
-	await client.edit_profile(password=None, avatar=pfp)
+	await client.user.edit(avatar=pfp)
 
 client.run(
     os.getenv("TOKEN")
