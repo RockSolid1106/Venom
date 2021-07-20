@@ -33,7 +33,7 @@ async def ping(ctx):
 ##############----Member Commands----#########
 
 #Make Moderator
-@client.command(pass_context=True, brief="!makemod <ID or @mention>")
+@client.command(pass_context=True, description="!makemod <ID or @mention>", brief="Makes a user a Moderator. Can be only used by Owners.")
 @commands.has_role("Owner")
 async def makemod(ctx, member: discord.Member):
 
@@ -47,7 +47,7 @@ async def makemod(ctx, member: discord.Member):
 	await ctx.send(embed=embed)
 
 #remove Moderator
-@client.command(pass_context=True)
+@client.command(pass_context=True, description="!removemod <ID or @mention>", brief="Removes the Moderator role from a user. Can only be used by Owners.")
 @commands.has_role("Owner")
 async def removemod(ctx, member: discord.Member):
 
