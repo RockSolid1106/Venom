@@ -8,7 +8,7 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 
-
+#Here's a line from VSC.
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
