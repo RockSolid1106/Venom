@@ -229,6 +229,8 @@ async def hi(ctx):
     
   else:
     db[str(ctx.author)] = "500"
+    db[str(ctx.author)+"_report"]=""
+    db[str(ctx.author)+"_reportcount"]=0
     await ctx.send("User Successfully initialized.")
 
 
