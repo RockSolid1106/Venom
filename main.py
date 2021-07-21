@@ -116,15 +116,7 @@ def getbal(member):
 	matches = db[str(member)]
 	return (matches)
 
-def getreport(member):
-    matches=db[str(member)+"_report"]
-    return matches
 
-def addreport(member, reason):
-    current=db[str(member)+"_report"]
-    new=current+","+reason
-    db[str(member)+"_report"]=new
-    db[str(member)+"_reportcount"]+=1
 ##########--functions end------###########
 
 ############----Mute/Unmute----########
@@ -229,8 +221,6 @@ async def hi(ctx):
     
   else:
     db[str(ctx.author)] = "500"
-    db[str(ctx.author)+"_report"]=""
-    db[str(ctx.author)+"_reportcount"]=0
     await ctx.send("User Successfully initialized.")
 
 
@@ -244,7 +234,7 @@ async def addbal(ctx, amt, member: discord.Member):
 
 #####################------Misc End------##################
 
-
+#######----test------######
 #report and send a message to the Mods
 @client.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
 async def report(ctx, member: discord.Member, reason=None):
@@ -259,15 +249,8 @@ async def report(ctx, member: discord.Member, reason=None):
 	channel=client.get_channel(866506128103702529)
 	await channel.send(
 			f"{ctx.author} reported {member.name} \n **Reason**: {reason} \n **Channel**: {ctx.channel}")
+######---- test end -------#####
 
-@client.event(pass_context=True)
-async def warn(ctx, member: discord.Member, reason):
-    addreport(member, reason)
-    await member.send("You have been warned for "+reason+". Committing this mistake again will result in a mute or ban.")
-    await ctx.send("Member reported successfully")
-    
-    
-    
 
 @client.event
 async def on_ready():
