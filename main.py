@@ -290,6 +290,23 @@ async def setmcid(ctx, id):
     ctx.send("The channel ID was set successfully.")
 
 
+#warn function
+@client.command(pass_context=True)
+@commands.has_role("Moderator")
+async def warn(ctx, member: discord.Member, reason):
+	matches = db.prefix(str(ctx.author)+"_reports")
+  	if str(ctx.author) in matches:
+		db[str(ctx.author)+"_reports"]+="\n • "+reason
+	else:
+		db[str(ctx.author)+"_reports"]="• "+reason
+  
+@client.command(pass_context=True)
+@commands.has_role("Moderator")
+async def modlogs(ctx, member: discord.Member):
+    warnings=db[str(ctx.author)+"_reports"]
+    e=discord.Embed(title="Mod Logs for {0}", description="{1}").format(str(member), warnings)
+    ctx.send(embed=e)
+
 @client.event
 async def on_ready():
 	print('Logged in as {0.user}'.format(client))
