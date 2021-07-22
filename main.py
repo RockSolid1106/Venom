@@ -176,9 +176,9 @@ async def ban(ctx, member: discord.Member = None, reason=None):
 
 #Kick a user
 @client.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
-async def kick(ctx, member: discord.Member):
+async def kick(ctx, member: discord.Member, reason=None):
 	try:
-			await member.kick(reason=None)
+			await member.kick(reason)
 			await ctx.send(
 					"Kicked " + member.mention
 			)  
