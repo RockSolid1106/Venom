@@ -253,6 +253,7 @@ async def report(ctx, member: discord.Member, reason=None):
 
 #Delete a message
 @client.command(pass_context=True)
+@commands.has_role("Moderator")
 async def delete(ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, m8=None, m9=None, m10=None):
 	lst=[m1]
 	lst.append(m2)
