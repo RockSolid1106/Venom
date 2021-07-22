@@ -187,12 +187,13 @@ async def kick(ctx, member: discord.Member, reason=None):
 	if role in member.roles or role2 in member.roles:
 		await ctx.send("{0} cannot be kicked.".format(member.mention))
 		return
-		await member.kick(reason)
-		await ctx.send(
-				"Kicked " + member.mention
-		)  
+	await member.kick(reason)
+	await ctx.send(
+			"Kicked " + member.mention
+	)  
+	await member.send("You have been kicked from the server for: "+reason)
 
-		await ctx.send("bot does not have the kick members permission!")
+		
 
 
 ###############----Misc----##################
