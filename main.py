@@ -282,7 +282,7 @@ async def delete(ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, 
 	e=discord.Embed(title="Messages Deleted", description="The specified messages were successfully deleted.")
 	await ctx.send(embed=e)
  
- #Server specific settings
+#Server specific settings
 @client.command(pass_context=True, brief="Set the Moderator's channel ID")
 @commands.has_role("Owner")
 async def setmcid(ctx, id):
