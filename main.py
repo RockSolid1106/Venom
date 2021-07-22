@@ -255,7 +255,7 @@ async def report(ctx, member: discord.Member, reason=None):
         )
     )
 	await ctx.send(embed=embed)
-	channel=client.get_channel(866506128103702529)
+	channel=db[str(ctx.guild.id)+"_mcid"]
 	await channel.send(
 			f"{ctx.author} reported {member.name} \n **Reason**: {reason} \n **Channel**: {ctx.channel}")
 ######---- test end -------#####
@@ -280,6 +280,13 @@ async def delete(ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, 
 			await ctx.channel.delete_messages([discord.Object(id=x)])
 	e=discord.Embed(title="Messages Deleted", description="The specified messages were successfully deleted.")
 	await ctx.send(embed=e)
+ 
+ #Server specific settings
+@client.command(pass_context=True, brief="Set the Moderator's channel ID")
+@commands.has_role("Owner")
+async def setmcid(ctx, id):
+    db[str(ctx.guild.id)+"_mcid"]=id
+    ctx.send("The channel ID was set successfully.")
 
 
 @client.event
