@@ -251,6 +251,24 @@ async def report(ctx, member: discord.Member, reason=None):
 			f"{ctx.author} reported {member.name} \n **Reason**: {reason} \n **Channel**: {ctx.channel}")
 ######---- test end -------#####
 
+#Delete a message
+@client.command(pass_context=True, brief="Deletes specific messages by tthe message IDs. Upto 10 messages at a time.")
+async def del(ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, m8=None, m9=None, m10=None):
+    lst=[m1]
+    lst.append(m2)
+    lst.append(m3)
+    lst.append(m4)
+    lst.append(m5)
+    lst.append(m6)
+    lst.append(m7)
+    lst.append(m8)
+    lst.append(m9)
+    lst.append(m10)
+    for x in lst:
+        if x==None:
+            continue   
+    	await ctx.channel.delete_messages([discord.Object(id=x)])
+
 
 @client.event
 async def on_ready():
