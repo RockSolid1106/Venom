@@ -167,6 +167,11 @@ async def ban(ctx, member: discord.Member = None, reason=None):
 	if member == None or member == ctx.message.author:
 			await ctx.channel.send("You cannot ban yourself")
 			return
+	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
+	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+	if role in member.roles or role2 in member.roles:
+			await ctx.send("{0} cannot be banned.".format(member.mention))
+			return
 	if reason == None:
 			reason = "For being a jerk!"
 	message = f"You have been banned from {ctx.guild.name} for {reason}"
@@ -177,13 +182,17 @@ async def ban(ctx, member: discord.Member = None, reason=None):
 #Kick a user
 @client.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
 async def kick(ctx, member: discord.Member, reason=None):
-	try:
-			await member.kick(reason)
-			await ctx.send(
-					"Kicked " + member.mention
-			)  
-	except:
-			await ctx.send("bot does not have the kick members permission!")
+	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
+	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+	if role in member.roles or role2 in member.roles:
+		await ctx.send("{0} cannot be kicked.".format(member.mention))
+		return
+		await member.kick(reason)
+		await ctx.send(
+				"Kicked " + member.mention
+		)  
+
+		await ctx.send("bot does not have the kick members permission!")
 
 
 ###############----Misc----##################
