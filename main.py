@@ -248,6 +248,14 @@ async def addbal(ctx, amt, member: discord.Member):
 #report and send a message to the Mods
 @client.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
 async def report(ctx, member: discord.Member, reason=None):
+	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
+	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+	if role in member.roles or role2 in member.roles:
+		await ctx.send("{0} cannot be warned.".format(member.mention))
+		return
+	if reason==None:
+		await ctx.send("Specify a reason you fool")
+		return
 	embed = (
         discord.Embed(
             title="Reported",
@@ -262,7 +270,7 @@ async def report(ctx, member: discord.Member, reason=None):
 ######---- test end -------#####
 
 #Delete a message
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Deletes message by their IDs. Allows upto 10 message IDs")
 @commands.has_role("Moderator")
 async def delete(ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, m8=None, m9=None, m10=None):
 	lst=[m1]
@@ -293,19 +301,39 @@ async def setmcid(ctx, id):
 #warn function
 @client.command(pass_context=True)
 @commands.has_role("Moderator")
-async def warn(ctx, member: discord.Member, reason):
-	matches = db.prefix(str(ctx.author)+"_reports")
-  	if str(ctx.author) in matches:
-		db[str(ctx.author)+"_reports"]+="\n • "+reason
+async def warn(ctx, member: discord.Member, reason=None):
+	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
+	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+	if role in member.roles or role2 in member.roles:
+		await ctx.send("{0} cannot be warned.".format(member.mention))
+		return
+	if reason==None:
+		await ctx.send("Specify a reason you fool")
+		return
+	db_keys = db.keys()
+	matches = str(member)+"_reports"
+	if matches in db_keys:
+		prev=db[str(member)+"_reports"]
+		new=prev+"\n • "+reason
+		print(new)
+		db[str(member)+"_reports"]=new
 	else:
-		db[str(ctx.author)+"_reports"]="• "+reason
+		db[str(member)+"_reports"]="• "+reason
+	await ctx.send(member.mention+" was warned for "+reason)
   
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Displays the modlogs of a user")
 @commands.has_role("Moderator")
 async def modlogs(ctx, member: discord.Member):
-    warnings=db[str(ctx.author)+"_reports"]
-    e=discord.Embed(title="Mod Logs for {0}", description="{1}").format(str(member), warnings)
-    ctx.send(embed=e)
+    warnings=db[str(member)+"_reports"]
+    e=discord.Embed(title="Mod Logs for "+str(member), description=warnings)
+    await ctx.send(embed=e)
+
+@client.command(pass_context=True, brief="Clears the Modlogs for a user")
+@commands.has_role("Owner")
+async def clearml(ctx, member: discord.Member):
+	del db[str(member)+"_reports"]
+	await ctx.send("All modlogs were cleared for "+member.mention)
+
 
 @client.event
 async def on_ready():
@@ -313,11 +341,7 @@ async def on_ready():
 	print(discord.__version__)
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
-	pfp_path = "Venom-new.png"
-	fp = open(pfp_path, 'rb')
-	pfp = fp.read()
-	await client.user.edit(avatar=pfp)
-	print(datetime.now().time())
+	
 
 client.run(
     os.getenv("TOKEN")
