@@ -265,7 +265,7 @@ async def report(ctx, member: discord.Member, reason=None):
     )
 	await ctx.send(embed=embed)
 	dbchannel=db[str(ctx.guild.id)+"_mcid"]
-	channel=client.get_channel(dbchannel)
+	channel=client.get_channel(int(dbchannel))
 	await channel.send(
 			f"{ctx.author} reported {member.name} \n **Reason**: {reason} \n **Channel**: {ctx.channel}")
 ######---- test end -------#####
