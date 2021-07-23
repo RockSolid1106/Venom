@@ -301,7 +301,7 @@ async def setmcid(ctx, id):
 
 
 #warn function
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Gives a warning to a user. Moderator Command.")
 @commands.has_role("Moderator")
 async def warn(ctx, member: discord.Member, reason=None):
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
