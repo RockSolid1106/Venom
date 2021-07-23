@@ -349,6 +349,7 @@ async def delcase(ctx, member: discord.Member):
 	
 	new=prev[:indn]
 	db[str(member)+"_reports"+str(ctx.guild.id)]=new
+	await ctx.send("The last case was deleted.")
 
 @client.event
 async def on_ready():
