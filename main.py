@@ -341,6 +341,14 @@ async def clearml(ctx, member: discord.Member):
 	del db[str(member)+"_reports"+str(ctx.guild.id)]
 	await ctx.send("All modlogs were cleared for "+member.mention)
 
+@client.command(pass_context=True)
+@commands.has_role("Moderator")
+async def delcase(ctx, member: discord.Member):
+	prev=db[str(member)+"_reports"+str(ctx.guild.id)]
+	indn=prev.rfind('\n')
+	
+	new=prev[:indn]
+	db[str(member)+"_reports"+str(ctx.guild.id)]=new
 
 @client.event
 async def on_ready():
