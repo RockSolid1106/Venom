@@ -316,7 +316,7 @@ async def warn(ctx, member: discord.Member, reason=None):
 	matches = str(member)+"_reports"+str(ctx.guild.id)
 	if matches in db_keys:
 		prev=db[str(member)+"_reports"+str(ctx.guild.id)]
-		new=prev+"\n • "+reason
+		new=prev+"\n• "+reason
 		
 		db[str(member)+"_reports"+str(ctx.guild.id)]=new
 	else:
