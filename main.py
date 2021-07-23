@@ -251,7 +251,7 @@ async def report(ctx, member: discord.Member, reason=None):
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
 	if role in member.roles or role2 in member.roles:
-		await ctx.send("{0} cannot be warned.".format(member.mention))
+		await ctx.send("{0} cannot be reported.".format(member.mention))
 		return
 	if reason==None:
 		await ctx.send("Specify a reason you fool")
@@ -295,8 +295,9 @@ async def delete(ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, 
 @client.command(pass_context=True, brief="Set the Moderator's channel ID")
 @commands.has_role("Owner")
 async def setmcid(ctx, id):
-    db[str(ctx.guild.id)+"_mcid"]=id
-    ctx.send("The channel ID was set successfully.")
+		db[str(ctx.guild.id)+"_mcid"]=id
+		await ctx.send("The channel ID was set successfully.")
+		await ctx.send(db[str(ctx.guild.id)+"_mcid"])
 
 
 #warn function
