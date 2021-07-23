@@ -317,7 +317,7 @@ async def warn(ctx, member: discord.Member, reason=None):
 	if matches in db_keys:
 		prev=db[str(member)+"_reports"+str(ctx.guild.id)]
 		new=prev+"\n • "+reason
-		print(new)
+		
 		db[str(member)+"_reports"+str(ctx.guild.id)]=new
 	else:
 		db[str(member)+"_reports"+str(ctx.guild.id)]="• "+reason
@@ -341,7 +341,7 @@ async def clearml(ctx, member: discord.Member):
 	del db[str(member)+"_reports"+str(ctx.guild.id)]
 	await ctx.send("All modlogs were cleared for "+member.mention)
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Deletes the last case for a user")
 @commands.has_role("Moderator")
 async def delcase(ctx, member: discord.Member):
 	prev=db[str(member)+"_reports"+str(ctx.guild.id)]
