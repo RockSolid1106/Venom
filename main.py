@@ -313,27 +313,32 @@ async def warn(ctx, member: discord.Member, reason=None):
 		await ctx.send("Specify a reason you fool")
 		return
 	db_keys = db.keys()
-	matches = str(member)+"_reports"
+	matches = str(member)+"_reports"+str(ctx.guild.id)
 	if matches in db_keys:
-		prev=db[str(member)+"_reports"]
+		prev=db[str(member)+"_reports"+str(ctx.guild.id)]
 		new=prev+"\n • "+reason
 		print(new)
-		db[str(member)+"_reports"]=new
+		db[str(member)+"_reports"+str(ctx.guild.id)]=new
 	else:
-		db[str(member)+"_reports"]="• "+reason
+		db[str(member)+"_reports"+str(ctx.guild.id)]="• "+reason
 	await ctx.send(member.mention+" was warned for "+reason)
   
 @client.command(pass_context=True, brief="Displays the modlogs of a user")
 @commands.has_role("Moderator")
 async def modlogs(ctx, member: discord.Member):
-    warnings=db[str(member)+"_reports"]
-    e=discord.Embed(title="Mod Logs for "+str(member), description=warnings)
-    await ctx.send(embed=e)
+	db_keys = db.keys()
+	matches = str(member)+"_reports"+str(ctx.guild.id)
+	if matches in db_keys:
+		warnings=db[str(member)+"_reports"+str(ctx.guild.id)]
+		e=discord.Embed(title="Mod Logs for "+str(member), description=warnings)
+		await ctx.send(embed=e)
+	else:
+		await ctx.send(member.mention+" does not have any warnings.")
 
 @client.command(pass_context=True, brief="Clears the Modlogs for a user")
 @commands.has_role("Owner")
 async def clearml(ctx, member: discord.Member):
-	del db[str(member)+"_reports"]
+	del db[str(member)+"_reports"+str(ctx.guild.id)]
 	await ctx.send("All modlogs were cleared for "+member.mention)
 
 
