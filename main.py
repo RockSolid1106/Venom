@@ -97,7 +97,7 @@ async def unlock(ctx, channel: discord.TextChannel=None):
 	role=discord.utils.get(ctx.guild.roles, name="Member")
 	overwrite = channel.overwrites_for(role)
 	overwrite.send_messages = True
-	await channel.set_permissions(ctx.guild.default_role, overwrite=overwrite)
+	await channel.set_permissions(role, overwrite=overwrite)
 	embed=discord.Embed(
 	title="Channel Locked",
 	description="This channel was unlocked by **{0}**".format(ctx.author.mention), color=discord.Colour.green())
@@ -267,7 +267,7 @@ async def report(ctx, member: discord.Member, reason=None):
 	dbchannel=db[str(ctx.guild.id)+"_mcid"]
 	channel=client.get_channel(int(dbchannel))
 	await channel.send(
-			f"{ctx.author} reported {member.name} \n **Reason**: {reason} \n **Channel**: {ctx.channel}")
+			f"{ctx.author} reported {member.name} \n **Reason**: {reason} \n **Channel**: {ctx.channel.mention}")
 ######---- test end -------#####
 
 #Delete a message
@@ -322,6 +322,7 @@ async def warn(ctx, member: discord.Member, reason=None):
 	else:
 		db[str(member)+"_reports"+str(ctx.guild.id)]="• "+reason
 	await ctx.send(member.mention+" was warned for "+reason)
+	await member.send("You were warned in **{0}**. \n**Reason:** {1}.".format(ctx.message.guild.name, reason))
   
 @client.command(pass_context=True, brief="Displays the modlogs of a user")
 @commands.has_role("Moderator")
@@ -346,7 +347,10 @@ async def clearml(ctx, member: discord.Member):
 async def delcase(ctx, member: discord.Member):
 	prev=db[str(member)+"_reports"+str(ctx.guild.id)]
 	indn=prev.rfind('\n')
-	
+	if(indn==-1):
+		del db[str(member)+"_reports"+str(ctx.guild.id)]
+		await ctx.send(member.mention+" now has no warnings/modlogs.")
+		return
 	new=prev[:indn]
 	db[str(member)+"_reports"+str(ctx.guild.id)]=new
 	await ctx.send("The last case was deleted.")
