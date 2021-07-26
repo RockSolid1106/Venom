@@ -378,22 +378,27 @@ async def raiseticket(ctx, reason):
 	
 	role = discord.utils.get(ctx.guild.roles, name="Member")
 	role2 = discord.utils.get(ctx.guild.roles, name="Moderator")
-	
+	db[str(ctx.guild.id)+'tokenno']=int(db[str(ctx.guild.id)+'tokenno'])+1
 	channel = await ctx.guild.create_text_channel('ticket-'+str(db[str(ctx.guild.id)+"tokenno"]), sync_permissions=False, category=category)
 	await channel.set_permissions(ctx.author, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
 	await channel.set_permissions(role2, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
 	await channel.set_permissions(role, read_messages=False)
 	await channel.set_permissions(ctx.guild.default_role, read_messages=False)
-	db[str(ctx.guild.id)+'tokenno']=int(db[str(ctx.guild.id)+'tokenno'])+1
+	
 	await channel.send("A moderator/owner will be with you shortly.")
 
 	db_keys = db.keys()
 	matches = str(ctx.guild.id)+str(ctx.author)+"_tickets"
 	if matches in db_keys:
 		db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]=db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]+"• "+str(db[str(ctx.guild.id)+'tokenno'])+": "+reason+"\n"
+	
+
 	else:
 		db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]="• "+str(db[str(ctx.guild.id)+'tokenno'])+": "+reason+"\n"
-	
+
+	matches = str(ctx.guild.id)+"ticketcount"
+	if matches in db_keys:
+		db[str(ctx.guild.id)+"_ticketcount"]=db[str(ctx.guild.id)+"_ticketcount"]+"• "+db[str(ctx.guild.id)+'tokenno']+" - "+str(ctx.author)+"\n"
 
 @client.command(pass_context=True)
 async def initickets(ctx):
@@ -407,19 +412,51 @@ async def ticketlogs(ctx, member: discord.Member):
 
 @client.command(pass_context=True)
 @commands.has_role("Moderator")
-async def chatlogs(ctx):
-	channel=ctx.channel
-	messages = await channel.history(limit=200).flatten()
-	print(ctx.send(messages))
+async def clhistory(ctx):
+	tickets=db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]
+	e=discord.Embed(title="Ticket History", description=str(tickets))
+	await ctx.send(embed=e)
 
+
+@client.command(pass_context=True)
+@commands.has_role("Moderator")
+async def chatlogs(ctx, ticket=None):
+	if ticket==None:
+		channel=ctx.channel
+		msgs=[]
+		messages = channel.history(limit=200)
+		async for message in messages:
+			print(message.author+": "+message.content)
+			msgs.append("**{0}:** {1}".format(str(message.author), message.content)+"\n")
+		msgsrev=msgs[::-1]
+		str1 = ''.join(str(e) for e in msgsrev)
+		e=discord.Embed(title="Chatlogs", description=str1)
+		await ctx.send(embed=e)
+	else:
+		logs=db[str(ctx.guild.id)+"ticket-"+str(ticket)+"_logs"]
+		e=discord.Embed(title="Chatlogs for ticket: {0}".format(ticket), description=str(logs))
+		await ctx.send(embed=e)
 
 @client.command(pass_context=True)
 @commands.has_role("Moderator")
 async def delticket(ctx):
 	if "ticket" in ctx.channel.name:
+		
+		channel=ctx.channel
+		msgs=[]
+		messages = channel.history(limit=200)
+		async for message in messages:
+			msgs.append("**{0}:** {1}".format(str(message.author), message.content)+"\n")
+		msgsrev=msgs[::-1]
+		str1 = ''.join(str(e) for e in msgsrev)
+		print(ctx.channel.name)
+		
+		db[str(ctx.guild.id)+str(ctx.channel.name)+"_logs"]=str1
+		print(db[str(ctx.guild.id)+str(ctx.channel.name)+"_logs"])
 		await ctx.channel.delete()
 	else:
 		await ctx.send("This is not a ticket channel u dummy dum dum")
+	
 
 @client.event
 async def on_ready():
