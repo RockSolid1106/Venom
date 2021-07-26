@@ -8,6 +8,8 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 
+
+#use this code in the shell if the script is running with two instances: pkill -9 python
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
@@ -299,7 +301,13 @@ async def setmcid(ctx, id):
 		await ctx.send("The channel ID was set successfully.")
 		await ctx.send(db[str(ctx.guild.id)+"_mcid"])
 
-
+@client.command(pass_context=True)
+@commands.has_role("Owner")
+async def setscid(ctx, id):
+	db[str(ctx.guild.id)+"_scid"]=id
+	await ctx.send("The Support channel ID was set successfully.")
+	await ctx.send(db[str(ctx.guild.id)+"_scid"])
+	db[str(ctx.guild.id)+"tokenno"]=1
 #warn function
 @client.command(pass_context=True, brief="Gives a warning to a user. Moderator Command.")
 @commands.has_role("Moderator")
@@ -355,6 +363,64 @@ async def delcase(ctx, member: discord.Member):
 	db[str(member)+"_reports"+str(ctx.guild.id)]=new
 	await ctx.send("The last case was deleted.")
 
+
+
+
+#--Experimental
+
+
+@client.command(pass_context=True)
+async def raiseticket(ctx, reason):
+	await ctx.send("Your case has been created!")
+	await ctx.message.delete()
+	id=int(db[str(ctx.guild.id)+"_scid"])
+	category=discord.utils.get(ctx.guild.categories, id=id)
+	
+	role = discord.utils.get(ctx.guild.roles, name="Member")
+	role2 = discord.utils.get(ctx.guild.roles, name="Moderator")
+	
+	channel = await ctx.guild.create_text_channel('ticket-'+str(db[str(ctx.guild.id)+"tokenno"]), sync_permissions=False, category=category)
+	await channel.set_permissions(ctx.author, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
+	await channel.set_permissions(role2, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
+	await channel.set_permissions(role, read_messages=False)
+	await channel.set_permissions(ctx.guild.default_role, read_messages=False)
+	db[str(ctx.guild.id)+'tokenno']=int(db[str(ctx.guild.id)+'tokenno'])+1
+	await channel.send("A moderator/owner will be with you shortly.")
+
+	db_keys = db.keys()
+	matches = str(ctx.guild.id)+str(ctx.author)+"_tickets"
+	if matches in db_keys:
+		db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]=db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]+"• "+str(db[str(ctx.guild.id)+'tokenno'])+": "+reason+"\n"
+	else:
+		db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]="• "+str(db[str(ctx.guild.id)+'tokenno'])+": "+reason+"\n"
+	
+
+@client.command(pass_context=True)
+async def initickets(ctx):
+	db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]=""
+@client.command(pass_context=True)
+@commands.has_role("Moderator")
+async def ticketlogs(ctx, member: discord.Member):
+	datab=db[str(ctx.guild.id)+str(member)+"_tickets"]
+	e=discord.Embed(title="Tickets raised by {0}".format(str(member)), description=str(datab))
+	await ctx.send(embed=e)
+
+@client.command(pass_context=True)
+@commands.has_role("Moderator")
+async def chatlogs(ctx):
+	channel=ctx.channel
+	messages = await channel.history(limit=200).flatten()
+	print(ctx.send(messages))
+
+
+@client.command(pass_context=True)
+@commands.has_role("Moderator")
+async def delticket(ctx):
+	if "ticket" in ctx.channel.name:
+		await ctx.channel.delete()
+	else:
+		await ctx.send("This is not a ticket channel u dummy dum dum")
+
 @client.event
 async def on_ready():
 	print('Logged in as {0.user}'.format(client))
@@ -362,6 +428,7 @@ async def on_ready():
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
 	
+
 
 client.run(
     os.getenv("TOKEN")
