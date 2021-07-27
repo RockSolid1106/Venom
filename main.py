@@ -14,7 +14,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 import time
-from json import loads
 import tabulate
 from tabulate import tabulate
 from replit import db
@@ -370,7 +369,10 @@ async def delcase(ctx, member: discord.Member):
 
 
 @client.command(pass_context=True)
-async def raiseticket(ctx, reason):
+async def raiseticket(ctx, reason=None):
+	if reason==None:
+		await ctx.send("Give a reason dummy dum dum")
+		return
 	await ctx.send("Your case has been created!")
 	await ctx.message.delete()
 	id=int(db[str(ctx.guild.id)+"_scid"])
@@ -388,15 +390,17 @@ async def raiseticket(ctx, reason):
 	await channel.send("A moderator/owner will be with you shortly.")
 
 	db_keys = db.keys()
-	matches = str(ctx.guild.id)+str(ctx.author)+"_tickets"
+	matches = str(ctx.guild.id)+"_tickets"
+	tokenno=db[str(ctx.guild.id)+'tokenno']
+	tokenno=str(tokenno)
 	if matches in db_keys:
-		db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]=db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]+"• "+str(db[str(ctx.guild.id)+'tokenno'])+": "+reason+"\n"
-	
+		db[str(ctx.guild.id)+"_tickets"]=db[str(ctx.guild.id)+"_tickets"]+"• "+tokenno+": raised by "+str(ctx.author)+": "+reason+"\n"
+		print(db[str(ctx.guild.id)+"_tickets"])
 
 	else:
-		db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]="• "+str(db[str(ctx.guild.id)+'tokenno'])+": "+reason+"\n"
+		db[str(ctx.guild.id)+"_tickets"]="• "+tokenno+" raised by "+str(ctx.author)+": "+reason+"\n"
 
-	matches = str(ctx.guild.id)+"ticketcount"
+	matches = str(ctx.guild.id)+"_ticketcount"
 	if matches in db_keys:
 		db[str(ctx.guild.id)+"_ticketcount"]=db[str(ctx.guild.id)+"_ticketcount"]+"• "+db[str(ctx.guild.id)+'tokenno']+" - "+str(ctx.author)+"\n"
 
@@ -413,7 +417,7 @@ async def ticketlogs(ctx, member: discord.Member):
 @client.command(pass_context=True)
 @commands.has_role("Moderator")
 async def clhistory(ctx):
-	tickets=db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]
+	tickets=db[str(ctx.guild.id)+"_tickets"]
 	e=discord.Embed(title="Ticket History", description=str(tickets))
 	await ctx.send(embed=e)
 
@@ -424,9 +428,9 @@ async def chatlogs(ctx, ticket=None):
 	if ticket==None:
 		channel=ctx.channel
 		msgs=[]
-		messages = channel.history(limit=200)
+		messages = channel.history(limit=50)
 		async for message in messages:
-			print(message.author+": "+message.content)
+			#print(str(message.author)+": "+str(message.content))
 			msgs.append("**{0}:** {1}".format(str(message.author), message.content)+"\n")
 		msgsrev=msgs[::-1]
 		str1 = ''.join(str(e) for e in msgsrev)
