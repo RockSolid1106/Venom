@@ -14,8 +14,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 import time
-import tabulate
-from tabulate import tabulate
 from replit import db
 import os
 from keep_alive import keep_alive
