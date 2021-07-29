@@ -8,8 +8,8 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 
-
 #use this code in the shell if the script is running with two instances: pkill -9 python
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
@@ -180,6 +180,7 @@ async def ban(ctx, member: discord.Member = None, reason=None):
 
 #Kick a user
 @client.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
+@commands.has_role("Moderator")
 async def kick(ctx, member: discord.Member, reason=None):
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
