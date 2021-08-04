@@ -10,6 +10,8 @@ discord = "^1.7.3"
 Flask = "^2.0.1"
 replit = "^3.1.0"
 tabulate = "^0.8.9"
+django-buttons = "^0.9.2"
+choices = "^0.1"
 
 [tool.poetry.dev-dependencies]
 

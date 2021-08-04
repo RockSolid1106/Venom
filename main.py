@@ -9,7 +9,8 @@
 #GNU General Public License for more details.
 
 #use this code in the shell if the script is running with two instances: pkill -9 python
-
+#pip install -U git+https://github.com/Rapptz/discord.py
+import textwrap
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
@@ -17,7 +18,9 @@ import time
 from replit import db
 import os
 from keep_alive import keep_alive
-from datetime import datetime
+import datetime
+import buttons
+
 print("Copyright © 2021  RockSolid1106. \n This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
 keep_alive()
 print("This is the PRODUCTION version.")
@@ -208,7 +211,8 @@ async def hello(ctx):
 @commands.has_permissions(manage_messages=True)
 async def say(ctx, channel: discord.TextChannel, title, description):
     
-	embed = discord.Embed(title=title, description=description, color=0xFF0000)
+	embed = discord.Embed(title=title, description=description, color=0xFF0000,timestamp=datetime.datetime.utcnow())
+	embed.set_footer(text="By "+str(ctx.author))
 	await channel.send(embed=embed)
 
 
@@ -367,7 +371,7 @@ async def delcase(ctx, member: discord.Member):
 #--Experimental
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Creates a private channel between you, the moderators and admins.")
 async def raiseticket(ctx, reason=None):
 	if reason==None:
 		await ctx.send("Give a reason dummy dum dum")
@@ -387,6 +391,8 @@ async def raiseticket(ctx, reason=None):
 	await channel.set_permissions(ctx.guild.default_role, read_messages=False)
 	
 	await channel.send("A moderator/owner will be with you shortly.")
+	e=discord.Embed(title="Description for ticket", description=reason)
+	await channel.send(embed=e)
 
 	db_keys = db.keys()
 	matches = str(ctx.guild.id)+"_tickets"
@@ -394,7 +400,6 @@ async def raiseticket(ctx, reason=None):
 	tokenno=str(tokenno)
 	if matches in db_keys:
 		db[str(ctx.guild.id)+"_tickets"]=db[str(ctx.guild.id)+"_tickets"]+"• "+tokenno+": raised by "+str(ctx.author)+": "+reason+"\n"
-		print(db[str(ctx.guild.id)+"_tickets"])
 
 	else:
 		db[str(ctx.guild.id)+"_tickets"]="• "+tokenno+" raised by "+str(ctx.author)+": "+reason+"\n"
@@ -403,36 +408,37 @@ async def raiseticket(ctx, reason=None):
 	if matches in db_keys:
 		db[str(ctx.guild.id)+"_ticketcount"]=db[str(ctx.guild.id)+"_ticketcount"]+"• "+db[str(ctx.guild.id)+'tokenno']+" - "+str(ctx.author)+"\n"
 
-@client.command(pass_context=True)
-async def initickets(ctx):
-	db[str(ctx.guild.id)+str(ctx.author)+"_tickets"]=""
-@client.command(pass_context=True)
+
+@client.command(pass_context=True, brief="Shows all the past tickets raised.", description="Shows all the past tickets raised. If a member is specified, tickets raised by the specified member will be shown.")
 @commands.has_role("Moderator")
-async def ticketlogs(ctx, member: discord.Member):
-	datab=db[str(ctx.guild.id)+str(member)+"_tickets"]
-	e=discord.Embed(title="Tickets raised by {0}".format(str(member)), description=str(datab))
-	await ctx.send(embed=e)
-
-@client.command(pass_context=True)
-@commands.has_role("Moderator")
-async def clhistory(ctx):
-	tickets=db[str(ctx.guild.id)+"_tickets"]
-	e=discord.Embed(title="Ticket History", description=str(tickets))
-	await ctx.send(embed=e)
+async def ticketlogs(ctx, member: discord.Member=None):
+	if member==None:
+		tickets=db[str(ctx.guild.id)+"_tickets"]
+		e=discord.Embed(title="Ticket History", description=str(tickets))
+		await ctx.send(embed=e)
+	else:
+		datab=db[str(ctx.guild.id)+str(member)+"_tickets"]
+		e=discord.Embed(title="Tickets raised by {0}".format(str(member)), description=str(datab))
+		await ctx.send(embed=e)
 
 
-@client.command(pass_context=True)
+
+
+@client.command(pass_context=True, brief="Shows the chatlogs for a specific ticket.", description="Shows the chatlogs for a specific ticket. If no ticket number is specified, the last 30 messages will be shown.")
 @commands.has_role("Moderator")
 async def chatlogs(ctx, ticket=None):
 	if ticket==None:
 		channel=ctx.channel
 		msgs=[]
-		messages = channel.history(limit=50)
+		messages = channel.history(limit=30)
 		async for message in messages:
-			#print(str(message.author)+": "+str(message.content))
-			msgs.append("**{0}:** {1}".format(str(message.author), message.content)+"\n")
+			msgs.append("**{0}:** {1}".format(str(message.author), message.content)+"--")
 		msgsrev=msgs[::-1]
 		str1 = ''.join(str(e) for e in msgsrev)
+		str1=str1.replace("--", "\n")
+		str1=str1[2:]
+		str1=str1[:-2]
+		
 		e=discord.Embed(title="Chatlogs", description=str1)
 		await ctx.send(embed=e)
 	else:
@@ -440,7 +446,7 @@ async def chatlogs(ctx, ticket=None):
 		e=discord.Embed(title="Chatlogs for ticket: {0}".format(ticket), description=str(logs))
 		await ctx.send(embed=e)
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, brief="Closes a ticket, and stores the chatlogs in the database.")
 @commands.has_role("Moderator")
 async def delticket(ctx):
 	if "ticket" in ctx.channel.name:
@@ -455,7 +461,6 @@ async def delticket(ctx):
 		print(ctx.channel.name)
 		
 		db[str(ctx.guild.id)+str(ctx.channel.name)+"_logs"]=str1
-		print(db[str(ctx.guild.id)+str(ctx.channel.name)+"_logs"])
 		await ctx.channel.delete()
 	else:
 		await ctx.send("This is not a ticket channel u dummy dum dum")
@@ -468,6 +473,9 @@ async def on_ready():
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
 	
+
+
+
 
 
 client.run(
