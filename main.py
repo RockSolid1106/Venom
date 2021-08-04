@@ -10,7 +10,7 @@
 
 #use this code in the shell if the script is running with two instances: pkill -9 python
 #pip install -U git+https://github.com/Rapptz/discord.py
-import textwrap
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
