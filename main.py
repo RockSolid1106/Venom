@@ -21,8 +21,7 @@ from keep_alive import keep_alive
 import datetime
 import buttons
 
-print("Copyright © 2021  RockSolid1106. \n This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
-keep_alive()
+
 print("This is the PRODUCTION version.")
 
 client = commands.Bot(command_prefix="!")
@@ -472,6 +471,8 @@ async def on_ready():
 	print(discord.__version__)
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
+	print("Copyright © 2021  RockSolid1106. \n This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
+	keep_alive()
 	
 
 
