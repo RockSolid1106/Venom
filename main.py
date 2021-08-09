@@ -10,7 +10,7 @@
 
 #use this code in the shell if the script is running with two instances: pkill -9 python
 #pip install -U git+https://github.com/Rapptz/discord.py
-
+import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
@@ -86,8 +86,9 @@ async def lock(ctx, reason=None, channel: discord.TextChannel=None):
 	overwrite.send_messages = False
 	await channel.set_permissions(role, overwrite=overwrite)
 	embed=discord.Embed(
-	title="Channel Locked",
-	description="This channel was locked by **{0}** \n **Reason:** {1} \n **This channel is now closed to further replies.**".format(ctx.author.mention, reason), color=0xFF0000)
+	title="Channel Locked",	description="This channel is now closed to further messages.", color=0xFF0000, timestamp=datetime.datetime.utcnow())
+	embed.add_field(name="Reason", value="{0}".format(reason), inline=False)
+	embed.set_footer(text="By "+str(ctx.author))
 	await channel.send(embed=embed)
 
 #Unlock a Channel
@@ -100,8 +101,10 @@ async def unlock(ctx, channel: discord.TextChannel=None):
 	overwrite.send_messages = True
 	await channel.set_permissions(role, overwrite=overwrite)
 	embed=discord.Embed(
-	title="Channel Locked",
-	description="This channel was unlocked by **{0}**".format(ctx.author.mention), color=discord.Colour.green())
+	title="Channel Unlocked",
+	description="This channel is now open to messages.".format(ctx.author.mention), color=discord.Colour.green(), timestamp=datetime.datetime.utcnow())
+	embed.set_footer(text="By "+str(ctx.author))
+
 	await channel.send(embed=embed)
 
 ###############---Member Commands End---~################
@@ -211,7 +214,7 @@ async def hello(ctx):
 async def say(ctx, channel: discord.TextChannel, title, description):
     
 	embed = discord.Embed(title=title, description=description, color=0xFF0000,timestamp=datetime.datetime.utcnow())
-	embed.set_footer(text="By "+str(ctx.author))
+	embed.set_footer(text="By "+str(ctx.author.display_name))
 	await channel.send(embed=embed)
 
 
@@ -219,6 +222,44 @@ async def say(ctx, channel: discord.TextChannel, title, description):
 async def bal(ctx, member: discord.Member=None):
 	member=member or ctx.author
 	await ctx.send(str(member)+"'s balance is: $"+str(getbal(member)))
+
+@client.command(pass_context=True, brief="Mutes a user for specified time.", description="Mutes a user for specified time. \nExample: !tempmute @someone 10 m \"test\"")
+@commands.has_role("Moderator")
+async def tempmute(ctx, member: discord.Member, time: int, unitoftime, *, reason=None):
+		guild = ctx.guild
+		d=unitoftime
+		
+		role = discord.utils.get(member.guild.roles, name="Muted")
+		await member.add_roles(role)
+		role = discord.utils.get(member.guild.roles, name="Member")
+		await member.remove_roles(role)
+
+		embed = discord.Embed(title="Member muted!", description=f"{member.mention} has been tempmuted ", colour=discord.Colour.red())
+		embed.add_field(name="Reason:", value=reason, inline=False)
+		embed.add_field(name="Time left for the mute:", value=f"{time}{d}", inline=False)
+		await ctx.send(embed=embed)
+
+		if d == "s":
+				await asyncio.sleep(time)
+
+		if d == "m":
+				await asyncio.sleep(time*60)
+
+		if d == "h":
+				await asyncio.sleep(time*60*60)
+
+		if d == "d":
+				await asyncio.sleep(time*60*60*24)
+
+		role = discord.utils.get(member.guild.roles, name="Member")
+		await member.add_roles(role)
+		role = discord.utils.get(member.guild.roles, name="Muted")
+		await member.remove_roles(role)
+
+		embed = discord.Embed(title="Temp Unmuted", description=f"Unmuted {member.mention}.", colour=discord.Colour.light_gray())
+		await ctx.send(embed=embed)
+
+		return
 
 
 ###################-------Misc END-------------####################
@@ -269,8 +310,11 @@ async def report(ctx, member: discord.Member, reason=None):
 	await ctx.send(embed=embed)
 	dbchannel=db[str(ctx.guild.id)+"_mcid"]
 	channel=client.get_channel(int(dbchannel))
-	await channel.send(
-			f"{ctx.author} reported {member.name} \n **Reason**: {reason} \n **Channel**: {ctx.channel.mention}")
+	embed=discord.Embed(title="Report", description="{0} was reported by {1}".format(member.mention, ctx.author))
+	embed.add_field(name="Reason", value=reason, inline=False)
+	embed.add_field(name="Channel", value=ctx.channel.mention, inline=False)
+	#await channel.send(f"{ctx.author} reported {member.mention} \n **Reason**: {reason} \n **Channel**: {ctx.channel.mention}")
+	await channel.send(embed=embed)
 ######---- test end -------#####
 
 #Delete a message
@@ -437,9 +481,22 @@ async def chatlogs(ctx, ticket=None):
 		str1=str1.replace("--", "\n")
 		str1=str1[2:]
 		str1=str1[:-2]
-		
-		e=discord.Embed(title="Chatlogs", description=str1)
-		await ctx.send(embed=e)
+		try:
+			e=discord.Embed(title="Chatlogs", description=str1)
+			await ctx.send(embed=e)
+		except:
+			await ctx.send("The chatlogs are too long. Here are the last 15 messages.")
+			messages = channel.history(limit=15)
+			async for message in messages:
+				msgs.append("**{0}:** {1}".format(str(message.author), message.content)+"--")
+			msgsrev=msgs[::-1]
+			str1 = ''.join(str(e) for e in msgsrev)
+			str1=str1.replace("--", "\n")
+			str1=str1[2:]
+			str1=str1[:-2]
+			e=discord.Embed(title="Chatlogs", description=str1)
+			await ctx.send(embed=e)
+
 	else:
 		logs=db[str(ctx.guild.id)+"ticket-"+str(ticket)+"_logs"]
 		e=discord.Embed(title="Chatlogs for ticket: {0}".format(ticket), description=str(logs))
@@ -463,6 +520,13 @@ async def delticket(ctx):
 		await ctx.channel.delete()
 	else:
 		await ctx.send("This is not a ticket channel u dummy dum dum")
+
+
+@client.command(pass_context=True, brief="Sets the slowmode timer for the current channel.")
+@commands.has_role("Moderator")
+async def sm(ctx, seconds: int):
+    await ctx.channel.edit(slowmode_delay=seconds)
+    await ctx.send(f"Set the slowmode delay in this channel to {seconds} seconds!")
 	
 
 @client.event
