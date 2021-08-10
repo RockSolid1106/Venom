@@ -20,7 +20,7 @@ import os
 from keep_alive import keep_alive
 import datetime
 import buttons
-
+import random
 
 print("This is the PRODUCTION version.")
 
@@ -226,6 +226,58 @@ async def bal(ctx, member: discord.Member=None):
 @client.command(pass_context=True, brief="Mutes a user for specified time.", description="Mutes a user for specified time. \nExample: !tempmute @someone 10 m \"test\"")
 @commands.has_role("Moderator")
 async def tempmute(ctx, member: discord.Member, time: int, unitoftime, *, reason=None):
+		elevperms=False
+		guild = ctx.guild
+		d=unitoftime
+		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
+		role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+		if role2 in ctx.author.roles:
+			elevperms=True
+
+		if role in member.roles:# or role2 in member.roles:
+			if elevperms!=True:
+				await ctx.send("A moderator cannot mute an Owner.")
+				return
+			else:
+				role = discord.utils.get(member.guild.roles, name="Muted")
+				await member.add_roles(role)
+				role = discord.utils.get(member.guild.roles, name="Member")
+				await member.remove_roles(role)
+				role = discord.utils.get(member.guild.roles, name="Moderator")
+				await member.remove_roles(role)
+				embed = discord.Embed(title="Moderator muted!", description=f"{member.mention} has been tempmuted ", colour=discord.Colour.red())
+				embed.add_field(name="Reason:", value=reason, inline=False)
+				embed.add_field(name="Time left for the mute:", value=f"{time}{d}", inline=False)
+				await ctx.send(embed=embed)
+
+				if d == "s":
+						await asyncio.sleep(time)
+
+				if d == "m":
+						await asyncio.sleep(time*60)
+
+				if d == "h":
+						await asyncio.sleep(time*60*60)
+
+				if d == "d":
+						await asyncio.sleep(time*60*60*24)
+
+				role = discord.utils.get(member.guild.roles, name="Member")
+				await member.add_roles(role)
+				role = discord.utils.get(member.guild.roles, name="Moderator")
+				await member.add_roles(role)
+				role = discord.utils.get(member.guild.roles, name="Muted")
+				await member.remove_roles(role)
+
+				embed = discord.Embed(title="Temp Unmuted", description=f"Unmuted {member.mention}.", colour=discord.Colour.light_gray())
+				await ctx.send(embed=embed)
+
+				return
+				
+			
+		
+		
+
 		guild = ctx.guild
 		d=unitoftime
 		
@@ -258,9 +310,35 @@ async def tempmute(ctx, member: discord.Member, time: int, unitoftime, *, reason
 
 		embed = discord.Embed(title="Temp Unmuted", description=f"Unmuted {member.mention}.", colour=discord.Colour.light_gray())
 		await ctx.send(embed=embed)
+		print("nonmodunmute")
 
 		return
 
+
+
+@client.command(pass_context=True)
+@commands.cooldown(2, 3, commands.BucketType.user)
+async def serverping(message):
+    before = time.monotonic()
+    message = await message.send("Calculating ...")
+    ping = (time.monotonic() - before) * 1000
+    await message.edit(content=f":ping_pong: Pong!  **{int(ping)}ms**")
+
+@ping.error
+async def ping_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.send(f"{ctx.author.mention}, You are using this command too fast. Please wait a couple of seconds and try again.")
+
+@client.command()
+async def roast(ctx, *, member: discord.Member):
+    if ctx.author.id == 825282868028375062:
+        responses = ['You’re my favorite person besides every other person I’ve ever met.',
+                     'I envy people who have never met you.',
+                     'You’re not the dumbest person on the planet, but you sure better hope he doesn’t die.',
+                     '']
+        await ctx.send(f"Hey {member.mention} {random.choice(responses)}")
+    else:
+        return	
 
 ###################-------Misc END-------------####################
 
