@@ -10,6 +10,9 @@
 
 #use this code in the shell if the script is running with two instances: pkill -9 python
 #pip install -U git+https://github.com/Rapptz/discord.py
+#pip3 install --upgrade discord-components
+
+
 import asyncio
 import discord
 from discord.ext import commands
@@ -21,7 +24,8 @@ from keep_alive import keep_alive
 import datetime
 import buttons
 import random
-
+from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
+print(discord.__version__)
 print("This is the PRODUCTION version.")
 
 client = commands.Bot(command_prefix="!")
@@ -607,6 +611,17 @@ async def sm(ctx, seconds: int):
     await ctx.send(f"Set the slowmode delay in this channel to {seconds} seconds!")
 	
 
+
+
+@client.command()
+async def testbuttons(ctx):
+	await ctx.channel.send("Context", components=[Button(style=ButtonStyle.blue, label="Test")]) #Blue button with button label of "Test"
+	res = await client.wait_for("button_click") #Wait for button to be clicked
+	await res.respond(type=InteractionType.ChannelMessageWithSource, content=f'Button Clicked') #Responds to the button click by printing out a message only user can see #In our case, its "Button Clicked"
+	
+
+
+
 @client.event
 async def on_ready():
 	print('Logged in as {0.user}'.format(client))
@@ -615,6 +630,9 @@ async def on_ready():
 	    type=discord.ActivityType.listening, name="everything you say!"))
 	print("Copyright © 2021  RockSolid1106. \n This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
 	keep_alive()
+	DiscordComponents(client, change_discord_methods=True)
+	
+	
 	
 
 
