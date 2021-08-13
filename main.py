@@ -11,6 +11,8 @@
 #use this code in the shell if the script is running with two instances: pkill -9 python
 #pip install -U git+https://github.com/Rapptz/discord.py
 #pip3 install --upgrade discord-components
+#
+
 
 
 import asyncio
@@ -30,7 +32,7 @@ print("This is the PRODUCTION version.")
 
 client = commands.Bot(command_prefix="!")
 
-
+os.system("pip3 install --upgrade discord-components")
 @client.command()
 async def ping(ctx):
 	await ctx.send(f'pong {ctx.author.mention}')
@@ -629,7 +631,7 @@ async def on_ready():
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
 	print("Copyright © 2021  RockSolid1106. \n This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
-	keep_alive()
+	
 	DiscordComponents(client, change_discord_methods=True)
 	
 	
@@ -642,4 +644,4 @@ async def on_ready():
 client.run(
     os.getenv("TOKEN")
 ) 
-keep_alive.keep_alive()
+keep_alive()
