@@ -24,14 +24,13 @@ from replit import db
 import os
 from keep_alive import keep_alive
 import datetime
-import buttons
 import random
 from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 print(discord.__version__)
 print("This is the PRODUCTION version.")
 
 client = commands.Bot(command_prefix="!")
-
+keep_alive()
 os.system("pip3 install --upgrade discord-components")
 @client.command()
 async def ping(ctx):
@@ -644,4 +643,4 @@ async def on_ready():
 client.run(
     os.getenv("TOKEN")
 ) 
-keep_alive()
+
