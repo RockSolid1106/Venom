@@ -165,6 +165,14 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "pyotp"
+version = "2.6.0"
+description = "Python One Time Password Library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "replit"
 version = "3.1.0"
 description = "A library for interacting with features of repl.it"
@@ -212,7 +220,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "54f7815998c39c11744f06bf154cd50d60e8bb8ad0b905f5c9ab47f67fd6b7a8"
+content-hash = "79d3539137a90a3f06aa5f43782e4535cd76d06becbe80f0570d8f27b2d851ae"
 
 [metadata.files]
 aiohttp = [
@@ -395,6 +403,10 @@ multidict = [
     {file = "multidict-5.1.0-cp39-cp39-win32.whl", hash = "sha256:fc13a9524bc18b6fb6e0dbec3533ba0496bbed167c56d0aabefd965584557d80"},
     {file = "multidict-5.1.0-cp39-cp39-win_amd64.whl", hash = "sha256:7df80d07818b385f3129180369079bd6934cf70469f99daaebfac89dca288359"},
     {file = "multidict-5.1.0.tar.gz", hash = "sha256:25b4e5f22d3a37ddf3effc0710ba692cfc792c2b9edfb9c05aefe823256e84d5"},
+]
+pyotp = [
+    {file = "pyotp-2.6.0-py2.py3-none-any.whl", hash = "sha256:9d144de0f8a601d6869abe1409f4a3f75f097c37b50a36a3bf165810a6e23f28"},
+    {file = "pyotp-2.6.0.tar.gz", hash = "sha256:d28ddfd40e0c1b6a6b9da961c7d47a10261fb58f378cb00f05ce88b26df9c432"},
 ]
 replit = [
     {file = "replit-3.1.0-py3-none-any.whl", hash = "sha256:3aaf0791ce5b42fd1b740f58acf76461c703b8136fcc6358f2fbf44c0bdf9bb3"},

