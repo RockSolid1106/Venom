@@ -37,7 +37,7 @@ async def ping(ctx):
 
 
 def admincheck(ctx):
-	if ctx.author.id==825282868028375062:
+	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
 		return True
 	role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
 	role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
@@ -47,7 +47,7 @@ def admincheck(ctx):
 		return False
 
 def modcheck(ctx):
-	if ctx.author.id==825282868028375062:
+	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
 		return True
 	role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
 	role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
