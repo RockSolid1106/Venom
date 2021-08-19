@@ -1,2 +1,3 @@
 language = "python3"
-run = "pip3 install --upgrade discord-components && python3 main.py"
+#run = "pip3 install --upgrade discord-components && python3 main.py"
+run = "python3 main.py"
