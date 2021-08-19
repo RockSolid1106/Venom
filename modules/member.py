@@ -19,7 +19,7 @@ class member(commands.Cog, name="Member"):
 
 	#report and send a message to the Mods
 	@commands.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
-	async def report(ctx, member: discord.Member, reason=None):
+	async def report(self, ctx, member: discord.Member, reason=None):
 		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 		role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
 		if role in member.roles or role2 in member.roles:
@@ -45,7 +45,7 @@ class member(commands.Cog, name="Member"):
 		await channel.send(embed=embed)
 
 	@commands.command(pass_context=True, brief="Creates a private channel between you, the moderators and admins.")
-	async def raiseticket(ctx, reason=None):
+	async def raiseticket(self, ctx, reason=None):
 		if reason==None:
 			await ctx.send("Give a reason dummy dum dum")
 			return

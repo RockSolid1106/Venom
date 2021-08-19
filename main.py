@@ -34,6 +34,26 @@ async def ping(ctx):
 
 
 
+def admincheck(self, ctx):
+	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+		return True
+	role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+	role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
+	if role in ctx.author.roles or role2 in ctx.author.roles:
+		return True
+	else:
+		return False
+
+def modcheck(self, ctx):
+	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+		return True
+	role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+	role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
+	role3 = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
+	if role in ctx.author.roles or role2 in ctx.author.roles or role3 in ctx.author.roles:
+		return True
+	else:
+		return False
 
 
 
@@ -139,10 +159,12 @@ async def fa(ctx, secret):
 	await ctx.send(totp.verify(secret))
 
 @client.command()
-async def load(ctx, module):
+async def load(ctx, module=None):
 	if ctx.author.id!=825282868028375062 or ctx.author.id!=820189220185833472:
 		await ctx.send("You dont have permissions to do that.")
 		return
+	if module==None:
+		await ctx.send("The modules are: Member\nModeration\ntime_based")
 	client.load_extension(f"modules.{module}")
 	await ctx.send(f"Successfully loaded ```{module}```")
 
@@ -187,6 +209,7 @@ async def on_ready():
 	client.load_extension(f"modules.moderation")
 	client.load_extension(f"modules.member")
 	client.load_extension(f"modules.hello")
+	client.load_extension(f"modules.time_based")
 	#DiscordComponents(client, change_discord_methods=True)
 	
 	
