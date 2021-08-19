@@ -20,7 +20,7 @@ import os
 from keep_alive import keep_alive
 import datetime
 import random
-from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
+#from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 import hmac, base64, struct, hashlib, array
 print(discord.__version__)
 print("This is the PRODUCTION version.")
@@ -232,8 +232,7 @@ async def ban(ctx, member: discord.Member = None, reason=None):
 
 #Kick a user
 @client.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
-#@commands.has_any_role("Moderator", "Owner", "Admin")
-async def kick(ctx, member: discord.Member, reason=None):
+async def kick(ctx, member: discord.Member):
 	if modcheck(ctx)==False:
 		await ctx.send("Tryna use mod commands huh?")
 		return
@@ -242,21 +241,22 @@ async def kick(ctx, member: discord.Member, reason=None):
 	if role in member.roles or role2 in member.roles:
 		await ctx.send("{0} cannot be kicked.".format(member.mention))
 		return
-	await member.kick(reason)
+	await member.kick(reason=None)
 	await ctx.send(
 			"Kicked " + member.mention
 	)  
-	await member.send("You have been kicked from the server for: "+reason)
+	await member.send("You have been kicked from the server")
 
 		
 
 
 ###############----Misc----##################
 
-
+"""
 @client.command(pass_context=True, brief="Timepass")
 async def hello(ctx):
 	await ctx.send(f'Hello there {ctx.author.mention}, how are you doing?')
+	"""
 
 
 @client.command(pass_context=True, brief="Makes the bot send an embed in a specified channel.", description="Don't forget to use double-quotes for the title and description.")
@@ -395,9 +395,11 @@ async def ping_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(f"{ctx.author.mention}, You are using this command too fast. Please wait a couple of seconds and try again.")
 
+		
+
 @client.command()
 async def roast(ctx, *, member: discord.Member):
-    if ctx.author.id == 825282868028375062:
+    if ctx.author.id == 825282868028375062 or ctx.author.id==820189220185833472:
         responses = ['You’re my favorite person besides every other person I’ve ever met.',
                      'I envy people who have never met you.',
                      'You’re not the dumbest person on the planet, but you sure better hope he doesn’t die.',
@@ -707,12 +709,13 @@ async def sm(ctx, seconds: int):
 	
 
 
-
+"""
 @client.command()
 async def testbuttons(ctx):
 	await ctx.channel.send("Context", components=[Button(style=ButtonStyle.blue, label="Test")]) #Blue button with button label of "Test"
 	res = await client.wait_for("button_click") #Wait for button to be clicked
 	await res.respond(type=InteractionType.ChannelMessageWithSource, content=f'Button Clicked') #Responds to the button click by printing out a message only user can see #In our case, its "Button Clicked"
+	"""
 	
 
 @client.event
@@ -749,12 +752,40 @@ async def gimmerole(ctx, rolename):
 
 @client.command()
 #@commands.has_any_role("Owner", "Admin")
+@commands.cooldown(1, 30, commands.BucketType.user)
 async def fa(ctx, secret):
 	if admincheck(ctx)==False:
 		await ctx.send("Tryna use admin commands huh?")
 		return
 	totp = pyotp.TOTP(os.getenv("2FA"))
 	await ctx.send(totp.verify(secret))
+
+@client.command()
+async def load(ctx, module):
+	client.load_extension(f"modules.{module}")
+
+@client.command()
+async def restart(ctx, authcode):
+	totp = pyotp.TOTP(os.getenv("2FA"))
+	if totp.verify(authcode)==True:
+		await ctx.send("*Restarting...*")
+		time.sleep(0.5)
+		client.logout()
+		time.sleep(1)
+		client.login()
+	else:
+		await ctx.send("Incorrect code")
+
+@fa.error
+async def ping_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.send(f"{ctx.author.mention}, You are using this command too fast. Please wait a couple of seconds and try again.")		
+"""
+@client.event
+async def on_command_error(ctx, error):
+	await ctx.send(f"An error occured: ```{str(error)}```")
+	print(error)
+	"""
 
 @client.event
 async def on_ready():
@@ -763,7 +794,7 @@ async def on_ready():
 	await client.change_presence(activity=discord.Activity(
 	    type=discord.ActivityType.listening, name="everything you say!"))
 	print("Copyright © 2021  RockSolid1106. \nThis program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
-	DiscordComponents(client, change_discord_methods=True)
+	#DiscordComponents(client, change_discord_methods=True)
 	
 	
 	
