@@ -188,7 +188,7 @@ async def load(ctx, module=None):
 		await ctx.send("You dont have permissions to do that.")
 		return
 	if module==None:
-		await ctx.send("The modules are: \nMember\nModeration\ntime_based\nchatfilter")
+		await ctx.send("The modules are: \n• Member\n• Moderation\n• time_based\n• chatfilter")
 	client.load_extension(f"modules.{module}")
 	await ctx.send(f"Successfully loaded ```{module}```")
 
@@ -232,7 +232,6 @@ async def on_ready():
 	print("Copyright © 2021  RockSolid1106. \nThis program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
 	client.load_extension(f"modules.moderation")
 	client.load_extension(f"modules.member")
-	client.load_extension(f"modules.hello")
 	client.load_extension(f"modules.time_based")
 	client.load_extension(f"modules.chatfilter")
 	#DiscordComponents(client, change_discord_methods=True)
