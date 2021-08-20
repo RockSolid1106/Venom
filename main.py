@@ -188,7 +188,7 @@ async def load(ctx, module=None):
 		await ctx.send("You dont have permissions to do that.")
 		return
 	if module==None:
-		await ctx.send("The modules are: Member\nModeration\ntime_based")
+		await ctx.send("The modules are: \nMember\nModeration\ntime_based\nchatfilter")
 	client.load_extension(f"modules.{module}")
 	await ctx.send(f"Successfully loaded ```{module}```")
 
@@ -234,6 +234,7 @@ async def on_ready():
 	client.load_extension(f"modules.member")
 	client.load_extension(f"modules.hello")
 	client.load_extension(f"modules.time_based")
+	client.load_extension(f"modules.chatfilter")
 	#DiscordComponents(client, change_discord_methods=True)
 	
 	

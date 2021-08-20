@@ -128,7 +128,7 @@ class moderation(commands.Cog, name="Moderation"):
 		if self.modcheck(ctx)==False:
 			await ctx.send("Tryna use mod commands huh?")
 			return
-		if member.id==825282868028375062 or member.id==820189220185833472:
+		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
 			await ctx.send("This user cannot be temp-muted.")
 			return
 		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
@@ -178,7 +178,7 @@ class moderation(commands.Cog, name="Moderation"):
 		if member == None or member == ctx.message.author:
 				await ctx.channel.send("You cannot ban yourself")
 				return
-		if member.id==825282868028375062 or member.id==820189220185833472:
+		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
 			await ctx.send("This user cannot be temp-muted.")
 			return
 		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
@@ -199,7 +199,7 @@ class moderation(commands.Cog, name="Moderation"):
 		if self.modcheck(ctx)==False:
 			await ctx.send("Tryna use mod commands huh?")
 			return
-		if member.id==825282868028375062 or member.id==820189220185833472:
+		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
 			await ctx.send("This user cannot be kicked.")
 			return			
 		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
@@ -288,6 +288,9 @@ class moderation(commands.Cog, name="Moderation"):
 	@commands.command(pass_context=True, brief="Gives a warning to a user. Moderator Command.")
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def warn(self, ctx, member: discord.Member, reason=None):
+		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
+			await ctx.send("This user cannot be warned.")
+			return	
 		if self.modcheck(ctx)==False:
 			await ctx.send("Tryna use mod commands huh?")
 			return
