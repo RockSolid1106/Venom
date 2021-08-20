@@ -8,7 +8,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from replit import db
-from keep_alive import keep_alive
 #from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
 client=commands.Bot(command_prefix="!")
