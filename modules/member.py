@@ -18,31 +18,7 @@ class member(commands.Cog, name="Member"):
 		self.client = commands.Bot(command_prefix="!")
 
 	#report and send a message to the Mods
-	@commands.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
-	async def report(self, ctx, member: discord.Member, reason=None):
-		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
-		role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-		if role in member.roles or role2 in member.roles:
-			await ctx.send("{0} cannot be reported.".format(member.mention))
-			return
-		if reason==None:
-			await ctx.send("Specify a reason you fool")
-			return
-		embed = (
-					discord.Embed(
-							title="Reported",
-							description=f"Thanks for reporting, {ctx.author}!",
-							colour=discord.Colour.light_gray(),
-					)
-			)
-		await ctx.send(embed=embed)
-		dbchannel=db[str(ctx.guild.id)+"_mcid"]
-		channel=client.get_channel(int(dbchannel))
-		embed=discord.Embed(title="Report", description="{0} was reported by {1}".format(member.mention, ctx.author))
-		embed.add_field(name="Reason", value=reason, inline=False)
-		embed.add_field(name="Channel", value=ctx.channel.mention, inline=False)
-		#await channel.send(f"{ctx.author} reported {member.mention} \n **Reason**: {reason} \n **Channel**: {ctx.channel.mention}")
-		await channel.send(embed=embed)
+
 
 	@commands.command(pass_context=True, brief="Creates a private channel between you, the moderators and admins.")
 	async def raiseticket(self, ctx, reason=None):

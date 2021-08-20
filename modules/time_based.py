@@ -13,7 +13,7 @@ import random
 import hmac, base64, struct, hashlib, array
 
 client=commands.Bot(command_prefix="!")
-class time_commands(commands.Cog, name="Member"):
+class time_commands(commands.Cog, name="Time Based"):
 	def __init__(self, client: commands.Bot):
 		self.client = commands.Bot(command_prefix="!")
 
@@ -44,6 +44,9 @@ class time_commands(commands.Cog, name="Member"):
 	async def tempmute(self, ctx, member: discord.Member, time, reason=None):
 			if self.modcheck(ctx)==False:
 				await ctx.send("Tryna use mod commands huh?")
+				return
+			if member.id==825282868028375062 or member.id==820189220185833472:
+				await ctx.send("This user cannot be temp-muted.")
 				return
 			unitoftime=time[-1:]
 			time=time[:-1]

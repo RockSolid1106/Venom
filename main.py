@@ -82,7 +82,7 @@ async def roast(ctx, *, member: discord.Member):
         responses = ['You’re my favorite person besides every other person I’ve ever met.',
                      'I envy people who have never met you.',
                      'You’re not the dumbest person on the planet, but you sure better hope he doesn’t die.',
-                     '']
+                     'I\'d say your aim is cancer but cancer actually kills people']
         await ctx.send(f"Hey {member.mention} {random.choice(responses)}")
     else:
         return	
@@ -92,7 +92,34 @@ async def roast(ctx, *, member: discord.Member):
 #######------misc-----#########
 
 
-
+@client.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
+async def report(ctx, member: discord.Member, reason=None):
+	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
+	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+	if role in member.roles or role2 in member.roles:
+		await ctx.send("{0} cannot be reported.".format(member.mention))
+		return
+	if reason==None:
+		await ctx.send("Specify a reason you fool")
+		return
+	embed = (
+				discord.Embed(
+						title="Reported",
+						description=f"Thanks for reporting, {ctx.author}!",
+						colour=discord.Colour.light_gray(),
+				)
+		)
+		
+	await ctx.send(embed=embed)
+	dbchannel=db[str(ctx.guild.id)+"_mcid"]
+	print(dbchannel)
+	dbchannel=int(dbchannel)
+	channelbyid=client.get_channel(dbchannel)
+	embed=discord.Embed(title="Report", description="{0} was reported by {1}".format(member.mention, ctx.author))
+	embed.add_field(name="Reason", value=reason, inline=False)
+	embed.add_field(name="Channel", value=ctx.channel.mention, inline=False)
+	
+	await channelbyid.send(embed=embed)
 
 
 
@@ -160,7 +187,7 @@ async def fa(ctx, secret):
 
 @client.command()
 async def load(ctx, module=None):
-	if ctx.author.id!=825282868028375062 or ctx.author.id!=820189220185833472:
+	if ctx.author.id!=825282868028375062 and ctx.author.id!=820189220185833472:
 		await ctx.send("You dont have permissions to do that.")
 		return
 	if module==None:
@@ -169,15 +196,15 @@ async def load(ctx, module=None):
 	await ctx.send(f"Successfully loaded ```{module}```")
 
 @client.command()
-async def unload(ctx, module):
-	if ctx.author.id!=825282868028375062 or ctx.author.id!=820189220185833472:
+async def unload(ctx, module=None):
+	if ctx.author.id!=825282868028375062 and ctx.author.id!=820189220185833472:
 		await ctx.send("You dont have permissions to do that.")
 		return
 	client.unload_extension(f"modules.{module}")
 	await ctx.send(f"Successfully unloaded ```{module}```")
 
 @client.command()
-async def reload(ctx, module):
+async def reload(ctx, module=None):
 	if ctx.author.id!=825282868028375062 and ctx.author.id!=820189220185833472:
 		await ctx.send("You dont have permissions to do that.")
 		return
@@ -192,12 +219,12 @@ async def reload(ctx, module):
 async def ping_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(f"{ctx.author.mention}, You are using this command too fast. Please wait a couple of seconds and try again.")		
-"""
+
 @client.event
 async def on_command_error(ctx, error):
 	await ctx.send(f"An error occured: ```{str(error)}```")
 	print(error)
-	"""
+	
 
 @client.event
 async def on_ready():
