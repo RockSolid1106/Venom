@@ -30,7 +30,6 @@ async def ping(ctx):
 	await ctx.send(f'pong {ctx.author.mention}')
 
 
-
 def admincheck(self, ctx):
 	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
 		return True
@@ -86,7 +85,9 @@ async def roast(ctx, *, member: discord.Member):
 
 ###################-------Misc END-------------####################
 
-#######------misc-----#########
+#######------misc-----########
+
+#
 
 
 @client.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
@@ -151,7 +152,7 @@ async def on_guild_join(guild):
 #@commands.has_any_role("Owner", "Admin")
 async def setupbot(ctx, mcid=None, scid=None):
 	if admincheck(ctx)==False:
-		await ctx.send("Tryna use admin commands huh?")
+		await ctx.send("This is an Admin/Owner command.")
 		return
 	if mcid==None or scid==None:
 		await ctx.send("Use the following format: \n```!setup <Moderator Channel ID> <Support CATEGORY(not channel) ID>```")
@@ -177,7 +178,7 @@ async def gimmerole(ctx, rolename):
 @commands.cooldown(1, 30, commands.BucketType.user)
 async def fa(ctx, secret):
 	if admincheck(ctx)==False:
-		await ctx.send("Tryna use admin commands huh?")
+		await ctx.send("This is an Admin/Owner command.")
 		return
 	totp = pyotp.TOTP(os.getenv("2FA"))
 	await ctx.send(totp.verify(secret))
@@ -212,17 +213,8 @@ async def reload(ctx, module=None):
 
 
 
-@fa.error
-async def ping_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.send(f"{ctx.author.mention}, You are using this command too fast. Please wait a couple of seconds and try again.")		
-"""
-@client.event
-async def on_command_error(ctx, error):
-	await ctx.send(f"An error occured: ```{str(error)}```")
-	print(error)
-"""
-	
+
+
 
 @client.event
 async def on_ready():
@@ -236,6 +228,7 @@ async def on_ready():
 	client.load_extension(f"modules.time_based")
 	client.load_extension(f"modules.chatfilter")
 	client.load_extension(f"modules.reactionroles")
+	client.load_extension(f"modules.administrator")
 	#DiscordComponents(client, change_discord_methods=True)
 	
 	

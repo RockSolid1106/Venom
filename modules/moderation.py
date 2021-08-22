@@ -40,7 +40,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Owner", "Admin")
 	async def makemod(self, ctx, member: discord.Member):
 		if self.admincheck(ctx)==False:
-			await ctx.send("Tryna use admin commands huh?")
+			await ctx.send("This is an Admin/Owner command.")
 			return
 		role = discord.utils.get(member.guild.roles, name="Moderator")
 		await member.add_roles(role)
@@ -56,7 +56,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Owner", "Admin")
 	async def removemod(self, ctx, member: discord.Member):
 		if self.admincheck(ctx)==False:
-			await ctx.send("Tryna use admin commands huh?")
+			await ctx.send("This is an Admin/Owner command.")
 			return
 		role = discord.utils.get(member.guild.roles, name="Moderator")
 		await member.remove_roles(role)
@@ -72,7 +72,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def makemember(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		role = discord.utils.get(member.guild.roles, name="Member")
 		await member.add_roles(role)
@@ -88,7 +88,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def lock(self, ctx, reason=None, channel: discord.TextChannel=None):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		channel = channel or ctx.channel
 		role=discord.utils.get(ctx.guild.roles, name="Member")
@@ -106,7 +106,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def unlock(self, ctx, channel: discord.TextChannel=None):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use admin commands huh?")
+			await ctx.send("This is an Admin/Owner command.")
 			return
 		channel = channel or ctx.channel
 		role=discord.utils.get(ctx.guild.roles, name="Member")
@@ -125,7 +125,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def mute(self, ctx, member: discord.Member, reason=None):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
 			await ctx.send("This user cannot be temp-muted.")
@@ -152,7 +152,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def unmute(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use admin commands huh?")
+			await ctx.send("This is an Admin/Owner command.")
 			return
 		role = discord.utils.get(member.guild.roles, name="Muted")
 		await member.remove_roles(role)
@@ -172,7 +172,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def ban(self, ctx, member: discord.Member = None, reason=None):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		if member == None or member == ctx.message.author:
 				await ctx.channel.send("You cannot ban yourself")
@@ -196,7 +196,7 @@ class moderation(commands.Cog, name="Moderation"):
 	@commands.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
 	async def kick(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
 			await ctx.send("This user cannot be kicked.")
@@ -228,7 +228,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_permissions(manage_messages=True)
 	async def say(self, ctx, channel: discord.TextChannel, title, description):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		embed = discord.Embed(title=title, description=description, color=0xFF0000,timestamp=datetime.datetime.utcnow())
 		embed.set_footer(text="By "+str(ctx.author.display_name))
@@ -243,7 +243,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def delete(self, ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, m8=None, m9=None, m10=None):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		lst=[m1]
 		lst.append(m2)
@@ -267,7 +267,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Owner", "Admin")
 	async def setmcid(self, ctx, id):
 		if self.admincheck(ctx)==False:
-			await ctx.send("Tryna use admin commands huh?")
+			await ctx.send("This is an Admin/Owner command.")
 			return
 		db[str(ctx.guild.id)+"_mcid"]=id
 		await ctx.send("The channel ID was set successfully.")
@@ -277,7 +277,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Owner", "Admin")
 	async def setscid(self, ctx, id):
 		if self.admincheck(ctx)==False:
-			await ctx.send("Tryna use admin commands huh?")
+			await ctx.send("This is an Admin/Owner command.")
 			return
 		db[str(ctx.guild.id)+"_scid"]=id
 		await ctx.send("The Support channel ID was set successfully.")
@@ -291,7 +291,7 @@ class moderation(commands.Cog, name="Moderation"):
 			await ctx.send("This user cannot be warned.")
 			return	
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 		role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
@@ -317,7 +317,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def modlogs(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		db_keys = db.keys()
 		matches = str(member)+"_reports"+str(ctx.guild.id)
@@ -332,7 +332,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Owner", "Admin")
 	async def clearml(self, ctx, member: discord.Member):
 		if self.admincheck(ctx)==False:
-			await ctx.send("Tryna use admin commands huh?")
+			await ctx.send("This is an Admin/Owner command.")
 			return
 		del db[str(member)+"_reports"+str(ctx.guild.id)]
 		await ctx.send("All modlogs were cleared for "+member.mention)
@@ -341,7 +341,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def delcase(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		prev=db[str(member)+"_reports"+str(ctx.guild.id)]
 		indn=prev.rfind('\n')
@@ -357,7 +357,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def ticketlogs(self, ctx, member: discord.Member=None):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		if member==None:
 			tickets=db[str(ctx.guild.id)+"_tickets"]
@@ -375,7 +375,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def chatlogs(self, ctx, ticket=None):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		if ticket==None:
 			channel=ctx.channel
@@ -413,7 +413,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def delticket(self, ctx):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		if "ticket" in ctx.channel.name:
 			
@@ -436,7 +436,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Moderator", "Owner")
 	async def sm(self, ctx, seconds: int):
 		if self.modcheck(ctx)==False:
-			await ctx.send("Tryna use mod commands huh?")
+			await ctx.send("This is a moderator command.")
 			return
 		await ctx.channel.edit(slowmode_delay=seconds)
 		await ctx.send(f"Set the slowmode delay in this channel to {seconds} seconds!")
@@ -445,7 +445,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#@commands.has_any_role("Owner", "Admin")
 	async def setup(self, ctx, mcid=None, scid=None):
 		if self.admincheck(ctx)==False:
-			await ctx.send("Tryna use admin commands huh?")
+			await ctx.send("This is an Admin/Owner command.")
 			return
 		if mcid==None or scid==None:
 			await ctx.send("Use the following format: \n```!setup <Moderator Channel ID> <Support CATEGORY(not channel) ID>```")
