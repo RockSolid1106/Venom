@@ -6,9 +6,9 @@
 #Use this code in the shell if the script is running with two instances: pkill -9 python
 #pip install -U git+https://github.com/Rapptz/discord.py
 #pip3 install --upgrade discord-components
+# -*- coding: UTF-8 -*-
 
-
-
+import emoji
 import pyotp
 import discord
 from discord.ext import commands
@@ -216,11 +216,12 @@ async def reload(ctx, module=None):
 async def ping_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(f"{ctx.author.mention}, You are using this command too fast. Please wait a couple of seconds and try again.")		
-
+"""
 @client.event
 async def on_command_error(ctx, error):
 	await ctx.send(f"An error occured: ```{str(error)}```")
 	print(error)
+"""
 	
 
 @client.event
@@ -234,6 +235,7 @@ async def on_ready():
 	client.load_extension(f"modules.member")
 	client.load_extension(f"modules.time_based")
 	client.load_extension(f"modules.chatfilter")
+	client.load_extension(f"modules.reactionroles")
 	#DiscordComponents(client, change_discord_methods=True)
 	
 	
