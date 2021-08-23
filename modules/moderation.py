@@ -37,6 +37,7 @@ class moderation(commands.Cog, name="Moderation"):
 			return False
 
 	@commands.command(pass_context=True, description="This command can only be used by Server Owners.", brief="Makes a user a Moderator. Can be only used by Owners.")
+	@commands.guild_only()
 	#@commands.has_any_role("Owner", "Admin")
 	async def makemod(self, ctx, member: discord.Member):
 		if self.admincheck(ctx)==False:
@@ -53,6 +54,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 	#remove Moderator
 	@commands.command(pass_context=True, description="This command can only be used by Server Owners.", brief="Removes the Moderator role from a user")
+	@commands.guild_only()
 	#@commands.has_any_role("Owner", "Admin")
 	async def removemod(self, ctx, member: discord.Member):
 		if self.admincheck(ctx)==False:
@@ -69,6 +71,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 	#Give the Member Role
 	@commands.command(pass_context=True, description="This command gives the Member role to a user. The user then has access to send messages to channels. This command can only be used by Moderator+", brief="Gives the member role.")
+	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def makemember(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
@@ -85,6 +88,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 	#Lock a channel
 	@commands.command(pass_context=True, brief="Locks a channel", description="The reason field cannot be left blank if you are specifying a different channel. So, !lock #general would not work. \n !lock will lock the current channel. \n !lock \"<reason>\" will work and lock the current channel. \n Enclose the reason in double-quotes (\"\") \n This command can only be used by Moderator+.")
+	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def lock(self, ctx, reason=None, channel: discord.TextChannel=None):
 		if self.modcheck(ctx)==False:
@@ -103,6 +107,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 	#Unlock a Channel
 	@commands.command(pass_context=True, brief="Unlocks a channel", description="This command can only be used by Moderator+. \n The channel field can be left empty if you want to unlock the current channel.")
+	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def unlock(self, ctx, channel: discord.TextChannel=None):
 		if self.modcheck(ctx)==False:
@@ -122,6 +127,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 	#Mute a user
 	@commands.command(pass_context=True, brief="Mutes a specified user", description="This command can only be used by Moderator+. \n Either the ID or @mention will work.")
+	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def mute(self, ctx, member: discord.Member, reason=None):
 		if self.modcheck(ctx)==False:
@@ -150,6 +156,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#Unmute a user
 	@commands.command(pass_context=True, brief="Unmutes a specified user", description="This command can only be used by Moderator+. \n Either the ID or @mention will work.")
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
+	@commands.guild_only()
 	async def unmute(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is an Admin/Owner command.")
@@ -169,6 +176,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 	#Ban a user
 	@commands.command(pass_context=True, brief="Bans a specified user", description="Use this command on your own discretion. A ban should be a last resort. Try using the mute/kick command before this command. Should the user commit a very grave crime, this command be used.")
+	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def ban(self, ctx, member: discord.Member = None, reason=None):
 		if self.modcheck(ctx)==False:
@@ -194,6 +202,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 	#Kick a user
 	@commands.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
+	@commands.guild_only()
 	async def kick(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
@@ -225,6 +234,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 
 	@commands.command(pass_context=True, brief="Makes the bot send an embed in a specified channel.", description="Don't forget to use double-quotes for the title and description.")
+	@commands.guild_only()
 	#@commands.has_permissions(manage_messages=True)
 	async def say(self, ctx, channel: discord.TextChannel, title, description):
 		if self.modcheck(ctx)==False:
@@ -241,6 +251,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#Delete a message
 	@commands.command(pass_context=True, brief="Deletes message by their IDs. Allows upto 10 message IDs")
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
+	@commands.guild_only()
 	async def delete(self, ctx, m1, m2=None, m3=None, m4=None, m5=None, m6=None, m7=None, m8=None, m9=None, m10=None):
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
@@ -264,6 +275,7 @@ class moderation(commands.Cog, name="Moderation"):
 	
 	#Server specific settings
 	@commands.command(pass_context=True, brief="Set the Moderator's channel ID")
+	@commands.guild_only()
 	#@commands.has_any_role("Owner", "Admin")
 	async def setmcid(self, ctx, id):
 		if self.admincheck(ctx)==False:
@@ -274,6 +286,7 @@ class moderation(commands.Cog, name="Moderation"):
 		await ctx.send(db[str(ctx.guild.id)+"_mcid"])
 
 	@commands.command(pass_context=True)
+	@commands.guild_only()
 	#@commands.has_any_role("Owner", "Admin")
 	async def setscid(self, ctx, id):
 		if self.admincheck(ctx)==False:
@@ -286,6 +299,7 @@ class moderation(commands.Cog, name="Moderation"):
 	#warn function
 	@commands.command(pass_context=True, brief="Gives a warning to a user. Moderator Command.")
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
+	@commands.guild_only()
 	async def warn(self, ctx, member: discord.Member, reason=None):
 		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
 			await ctx.send("This user cannot be warned.")
@@ -315,6 +329,7 @@ class moderation(commands.Cog, name="Moderation"):
 		
 	@commands.command(pass_context=True, brief="Displays the modlogs of a user")
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
+	@commands.guild_only()
 	async def modlogs(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
@@ -329,6 +344,7 @@ class moderation(commands.Cog, name="Moderation"):
 			await ctx.send(member.mention+" does not have any warnings.")
 
 	@commands.command(pass_context=True, brief="Clears the Modlogs for a user")
+	@commands.guild_only()
 	#@commands.has_any_role("Owner", "Admin")
 	async def clearml(self, ctx, member: discord.Member):
 		if self.admincheck(ctx)==False:
@@ -338,6 +354,7 @@ class moderation(commands.Cog, name="Moderation"):
 		await ctx.send("All modlogs were cleared for "+member.mention)
 
 	@commands.command(pass_context=True, brief="Deletes the last case for a user")
+	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def delcase(self, ctx, member: discord.Member):
 		if self.modcheck(ctx)==False:
@@ -354,6 +371,7 @@ class moderation(commands.Cog, name="Moderation"):
 		await ctx.send("The last case was deleted.")
 
 	@commands.command(pass_context=True, brief="Shows all the past tickets raised.", description="Shows all the past tickets raised. If a member is specified, tickets raised by the specified member will be shown.")
+	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def ticketlogs(self, ctx, member: discord.Member=None):
 		if self.modcheck(ctx)==False:
@@ -372,6 +390,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 
 	@commands.command(pass_context=True, brief="Shows the chatlogs for a specific ticket.", description="Shows the chatlogs for a specific ticket. If no ticket number is specified, the last 30 messages will be shown.")
+	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def chatlogs(self, ctx, ticket=None):
 		if self.modcheck(ctx)==False:
@@ -411,6 +430,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 	@commands.command(pass_context=True, brief="Closes a ticket, and stores the chatlogs in the database.")
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
+	@commands.guild_only()
 	async def delticket(self, ctx):
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
@@ -433,6 +453,7 @@ class moderation(commands.Cog, name="Moderation"):
 
 
 	@commands.command(pass_context=True, brief="Sets the slowmode timer for the current channel.")
+	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner")
 	async def sm(self, ctx, seconds: int):
 		if self.modcheck(ctx)==False:
@@ -442,6 +463,7 @@ class moderation(commands.Cog, name="Moderation"):
 		await ctx.send(f"Set the slowmode delay in this channel to {seconds} seconds!")
 
 	@commands.command()
+	@commands.guild_only()
 	#@commands.has_any_role("Owner", "Admin")
 	async def setup(self, ctx, mcid=None, scid=None):
 		if self.admincheck(ctx)==False:

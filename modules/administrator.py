@@ -30,7 +30,7 @@ class admin(commands.Cog, name="Admin"):
 	@commands.command()
 	async def showerror(self, ctx):
 		if ctx.author.id!=825282868028375062 and ctx.author.id==820189220185833472:
-			await ctx.send("You don't have the permission to use this command.")
+			await ctx.send("You don't have permission to use this command.")
 		error=errordic[ctx.guild.id+ctx.channel.id]
 		await ctx.send("Here is the last error: ```"+str(error)+"```")
 

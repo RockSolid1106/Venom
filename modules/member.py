@@ -18,6 +18,7 @@ class member(commands.Cog, name="Member"):
 
 
 	@commands.command(pass_context=True, brief="Creates a private channel between you, the moderators and admins.")
+	@commands.guild_only()
 	async def raiseticket(self, ctx, reason=None):
 		if reason==None:
 			await ctx.send("Give a reason dummy dum dum")

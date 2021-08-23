@@ -26,7 +26,8 @@ client = commands.Bot(command_prefix="!")
 keep_alive()
 
 @client.command()
-async def ping(ctx):
+@commands.guild_only()
+async def ping(ctx, no_pm=True):
 	await ctx.send(f'pong {ctx.author.mention}')
 
 
@@ -59,6 +60,7 @@ def modcheck(self, ctx):
 
 @client.command(pass_context=True)
 @commands.cooldown(2, 3, commands.BucketType.user)
+@commands.guild_only()
 async def serverping(message):
     before = time.monotonic()
     message = await message.send("Calculating...")
@@ -73,6 +75,7 @@ async def ping_error(ctx, error):
 		
 
 @client.command()
+@commands.guild_only()
 async def roast(ctx, *, member: discord.Member):
     if ctx.author.id == 825282868028375062 or ctx.author.id==820189220185833472:
         responses = ['You’re my favorite person besides every other person I’ve ever met.',
@@ -91,6 +94,7 @@ async def roast(ctx, *, member: discord.Member):
 
 
 @client.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
+@commands.guild_only()
 async def report(ctx, member: discord.Member, reason=None):
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
@@ -149,6 +153,7 @@ async def on_guild_join(guild):
         break
 
 @client.command()
+@commands.guild_only()
 #@commands.has_any_role("Owner", "Admin")
 async def setupbot(ctx, mcid=None, scid=None):
 	if admincheck(ctx)==False:
@@ -165,6 +170,7 @@ async def setupbot(ctx, mcid=None, scid=None):
 	await ctx.send(db[str(ctx.guild.id)+"_mcid"])
 
 @client.command()
+@commands.guild_only()
 async def gimmerole(ctx, rolename):
 	if ctx.author.id == 825282868028375062:
 		role = discord.utils.get(ctx.guild.roles, name=rolename)
@@ -174,6 +180,7 @@ async def gimmerole(ctx, rolename):
 		return
 
 @client.command()
+@commands.guild_only()
 #@commands.has_any_role("Owner", "Admin")
 @commands.cooldown(1, 30, commands.BucketType.user)
 async def fa(ctx, secret):
