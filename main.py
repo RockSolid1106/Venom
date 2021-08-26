@@ -25,6 +25,8 @@ print("This is the PRODUCTION version.")
 client = commands.Bot(command_prefix="!")
 keep_alive()
 
+client.deletedmessages=list()
+
 @client.command()
 @commands.guild_only()
 async def ping(ctx, no_pm=True):

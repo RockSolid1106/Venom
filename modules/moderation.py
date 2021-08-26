@@ -134,7 +134,7 @@ class moderation(commands.Cog, name="Moderation"):
 			await ctx.send("This is a moderator command.")
 			return
 		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
-			await ctx.send("This user cannot be temp-muted.")
+			await ctx.send("This user cannot be muted.")
 			return
 		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 		role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
@@ -186,7 +186,7 @@ class moderation(commands.Cog, name="Moderation"):
 				await ctx.channel.send("You cannot ban yourself")
 				return
 		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
-			await ctx.send("This user cannot be temp-muted.")
+			await ctx.send("This user cannot be banned.")
 			return
 		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 		role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
@@ -323,7 +323,7 @@ class moderation(commands.Cog, name="Moderation"):
 			
 			db[str(member)+"_reports"+str(ctx.guild.id)]=new
 		else:
-			db[str(member)+"_reports"+str(ctx.guild.id)]="• "+reason
+			db[str(member)+"_reports"+str(ctx.guild.id)]="•\t"+reason+"\n\tModerator: "+str(ctx.author)+"/"+str(ctx.author.name)
 		await ctx.send(member.mention+" was warned for "+reason)
 		await member.send("You were warned in **{0}**. \n**Reason:** {1}.".format(ctx.message.guild.name, reason))
 		
@@ -406,7 +406,7 @@ class moderation(commands.Cog, name="Moderation"):
 			str1 = ''.join(str(e) for e in msgsrev)
 			str1=str1.replace("--", "\n")
 			str1=str1[2:]
-			str1=str1[:-2]
+			str1=str1[:-1]
 			try:
 				e=discord.Embed(title="Chatlogs", description=str1)
 				await ctx.send(embed=e)
@@ -419,7 +419,7 @@ class moderation(commands.Cog, name="Moderation"):
 				str1 = ''.join(str(e) for e in msgsrev)
 				str1=str1.replace("--", "\n")
 				str1=str1[2:]
-				str1=str1[:-2]
+				str1=str1[:-1]
 				e=discord.Embed(title="Chatlogs", description=str1)
 				await ctx.send(embed=e)
 
@@ -449,7 +449,7 @@ class moderation(commands.Cog, name="Moderation"):
 			db[str(ctx.guild.id)+str(ctx.channel.name)+"_logs"]=str1
 			await ctx.channel.delete()
 		else:
-			await ctx.send("This is not a ticket channel u dummy dum dum")
+			await ctx.send("This is not a ticket channel.")
 
 
 	@commands.command(pass_context=True, brief="Sets the slowmode timer for the current channel.")
@@ -480,7 +480,24 @@ class moderation(commands.Cog, name="Moderation"):
 		await ctx.send(db[str(ctx.guild.id)+"_mcid"])
 
 	
-
+	@commands.command()
+	async def snipe(self, ctx, number=5):
+		if self.modcheck(ctx)==False:
+			await ctx.send("This is a moderator command")
+			return
+		info=db['delmessages'+str(ctx.guild.id)[3]]
+		message=""
+		x=0
+		counter=db['delmessagescount'+str(ctx.guild.id)]
+		while x<counter:
+			x=x+1
+			#print(x)
+			#print(db['delmessages'+str(ctx.guild.id)[x]])
+			message=message+db['delmessages'+str(ctx.guild.id)[x]]
+		
+		
+		
+		await ctx.send("Here are the last few deleted messages:```"+message+"```")
 	
 
 

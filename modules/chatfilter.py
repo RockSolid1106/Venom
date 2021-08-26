@@ -34,7 +34,8 @@ class chatfilter(commands.Cog, name="Member"):
 			await message.reply(msg2)
 			await message.delete()
 				
-		
+
+
 
 
 	

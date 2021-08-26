@@ -8,17 +8,29 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 
-from flask import Flask
+from flask import Flask, render_template, make_response
 from threading import Thread
+
 
 app = Flask('')
 
 @app.route('/')
 def main():
-    return "Your bot is alive!"
+		resp = "Hey"
+		
+		return resp 
 
 def run():
     app.run(host="0.0.0.0", port=8080)
+
+@app.route('/get-cookie')
+def get_cookie():
+	username = request.cookies.get('somecookiename')
+	return username
+	if username=="mQGNBGECT/oBDADPao":
+		return render_template('dashboard.html')
+		
+
 
 def keep_alive():
     server = Thread(target=run)

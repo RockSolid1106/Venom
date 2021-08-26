@@ -3,39 +3,37 @@
 #
 #This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-import pyotp
 import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 import time
-from replit import db
 import os
-from keep_alive import keep_alive
 import datetime
 import random
-#from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
-import hmac, base64, struct, hashlib, array
-errordic={}
+from pymongo import MongoClient
+import pymongo
+from dateutil import parser
+
 client=commands.Bot(command_prefix="!")
-class admin(commands.Cog, name="Admin"):
-	errordic={}
+class member(commands.Cog, name="Member"):
 	def __init__(self, client: commands.Bot):
 		self.client = commands.Bot(command_prefix="!")
+	pass=os.getenv('DBPASS')
+	CONNECTION_STRING = "mongodb+srv://Venom:"+pass+"@cluster0.govim.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+
+	dbclient = MongoClient(CONNECTION_STRING)
+
 	@commands.Cog.listener()
-	async def on_command_error(self, ctx, error):
-		#await ctx.send(f"An error occured: ```{str(error)}```")
-		print(error)
-		errordic[ctx.guild.id+ctx.channel.id]=error
-
-	@commands.command()
-	async def showerror(self, ctx):
-		if ctx.author.id!=825282868028375062 and ctx.author.id==820189220185833472:
-			await ctx.send("You don't have permission to use this command.")
-		error=errordic[ctx.guild.id+ctx.channel.id]
-		await ctx.send("Here is the last error: ```"+str(error)+"```")
-
+	async def on_message_delete(self, message):
+		async for entry in message.guild.audit_logs(limit=5,action=discord.AuditLogAction.message_delete):
+				deleter = entry.user
+		print(f"{deleter.name} deleted message a by {message.author.name}. Content: {message.content}")
+		
 
 
 def setup(client: commands.Bot):
-	client.add_cog(admin(client))
+	client.add_cog(member(client))
+
+
+
