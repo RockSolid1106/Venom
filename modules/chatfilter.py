@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from replit import db
 import os
+from cryptography.fernet import Fernet
 #from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
 client=commands.Bot(command_prefix="!")
@@ -11,6 +12,8 @@ class chatfilter(commands.Cog, name="Member"):
 	def __init__(self, client: commands.Bot):
 		self.client = commands.Bot(command_prefix="!")
 	
+	key=os.getenv('ENCKEY')
+	fernet=Fernet(key)
 	with open('badwords.txt', 'r') as f:
 		global badwords  # You want to be able to access this throughout the code
 		words = f.read()

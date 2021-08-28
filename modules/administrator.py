@@ -18,7 +18,7 @@ import random
 import hmac, base64, struct, hashlib, array
 errordic={}
 client=commands.Bot(command_prefix="!")
-class admin(commands.Cog, name="Admin"):
+class admin(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 	errordic={}
 	def __init__(self, client: commands.Bot):
 		self.client = commands.Bot(command_prefix="!")
@@ -34,6 +34,9 @@ class admin(commands.Cog, name="Admin"):
 			await ctx.send("You don't have permission to use this command.")
 		error=errordic[ctx.guild.id+ctx.channel.id]
 		await ctx.send("Here is the last error: ```"+str(error)+"```")
+		
+		
+
 
 
 

@@ -32,6 +32,16 @@ client.deletedmessages=list()
 async def ping(ctx, no_pm=True):
 	await ctx.send(f'pong {ctx.author.mention}')
 
+@client.command()
+async def cogstat(ctx):
+	if ctx.author.id != 825282868028375062 and ctx.author.id!=820189220185833472:
+		await ctx.send("You dont have the permission to use this command.")
+		return
+	loadedcogs=""
+	for NameOfCog,TheClassOfCog in client.cogs.items(): # we can 
+		print(NameOfCog)
+		loadedcogs=loadedcogs+"\n"+NameOfCog
+	await ctx.send("Here are the loaded cogs:```"+loadedcogs+"```")
 
 def admincheck(self, ctx):
 	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
@@ -215,9 +225,8 @@ async def reload(ctx, module=None):
 	if ctx.author.id!=825282868028375062 and ctx.author.id!=820189220185833472:
 		await ctx.send("You dont have permissions to do that.")
 		return
-	client.unload_extension(f"modules.{module}")
-	time.sleep(0.5)
-	client.load_extension(f"modules.{module}")
+	client.reload_extension(f"modules.{module}")
+	
 	await ctx.send(f"Succesfully reloaded ```{module}```")
 
 
@@ -235,7 +244,7 @@ async def on_ready():
 	client.load_extension(f"modules.moderation")
 	client.load_extension(f"modules.member")
 	client.load_extension(f"modules.time_based")
-	client.load_extension(f"modules.chatfilter")
+	#client.load_extension(f"modules.chatfilter")
 	client.load_extension(f"modules.reactionroles")
 	client.load_extension(f"modules.administrator")
 	#DiscordComponents(client, change_discord_methods=True)

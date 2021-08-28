@@ -237,6 +237,7 @@ class moderation(commands.Cog, name="Moderation"):
 	@commands.guild_only()
 	#@commands.has_permissions(manage_messages=True)
 	async def say(self, ctx, channel: discord.TextChannel, title, description):
+		description=description+"<a:redloading:880656122254598144>"
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
 			return
@@ -300,7 +301,7 @@ class moderation(commands.Cog, name="Moderation"):
 	@commands.command(pass_context=True, brief="Gives a warning to a user. Moderator Command.")
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	@commands.guild_only()
-	async def warn(self, ctx, member: discord.Member, reason=None):
+	async def warn(self, ctx, member: discord.Member, *, reason=None):
 		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
 			await ctx.send("This user cannot be warned.")
 			return	
@@ -313,17 +314,17 @@ class moderation(commands.Cog, name="Moderation"):
 			await ctx.send("{0} cannot be warned.".format(member.mention))
 			return
 		if reason==None:
-			await ctx.send("Specify a reason you fool")
+			await ctx.send("Specify a reason.")
 			return
 		db_keys = db.keys()
 		matches = str(member)+"_reports"+str(ctx.guild.id)
 		if matches in db_keys:
 			prev=db[str(member)+"_reports"+str(ctx.guild.id)]
-			new=prev+"\n• "+reason
+			new=prev+"\n•\tReason: "+reason+"\n\tModerator: "+str(ctx.author)+"/"+str(ctx.author.name)+"\n\t Date: "+str(datetime.datetime.utcnow())
 			
 			db[str(member)+"_reports"+str(ctx.guild.id)]=new
 		else:
-			db[str(member)+"_reports"+str(ctx.guild.id)]="•\t"+reason+"\n\tModerator: "+str(ctx.author)+"/"+str(ctx.author.name)
+			db[str(member)+"_reports"+str(ctx.guild.id)]="•\t"+reason+"\n\tModerator: "+str(ctx.author)+"/"+str(ctx.author.name)+"\n\t Date: "+str(datetime.datetime.utcnow())
 		await ctx.send(member.mention+" was warned for "+reason)
 		await member.send("You were warned in **{0}**. \n**Reason:** {1}.".format(ctx.message.guild.name, reason))
 		

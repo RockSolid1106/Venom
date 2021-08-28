@@ -19,17 +19,18 @@ client=commands.Bot(command_prefix="!")
 class member(commands.Cog, name="Member"):
 	def __init__(self, client: commands.Bot):
 		self.client = commands.Bot(command_prefix="!")
-	pass=os.getenv('DBPASS')
-	CONNECTION_STRING = "mongodb+srv://Venom:"+pass+"@cluster0.govim.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+	
 
-	dbclient = MongoClient(CONNECTION_STRING)
 
 	@commands.Cog.listener()
 	async def on_message_delete(self, message):
 		async for entry in message.guild.audit_logs(limit=5,action=discord.AuditLogAction.message_delete):
 				deleter = entry.user
 		print(f"{deleter.name} deleted message a by {message.author.name}. Content: {message.content}")
-		
+		file1 = open("MyFile.txt","a")
+		file1.write(f"{deleter.name} deleted a message posted by {message.author}: {message.content}")
+
+	
 
 
 def setup(client: commands.Bot):
