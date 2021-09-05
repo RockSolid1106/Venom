@@ -148,12 +148,16 @@ class moderation(commands.Cog, name="Moderation"):
 			role = discord.utils.get(member.guild.roles, name="Member")
 			await member.remove_roles(role)
 			embed = discord.Embed(title="User Muted!",
-														description="**{0}** was muted by **{1}**!".format(
-																member.mention, ctx.author.mention),
+														description="**{0}** was muted!".format(member.mention),
 														color=0xFF0000)
+			embed.set_footer(text="By "+str(ctx.author))
 			await ctx.send(embed=embed)
-			embed = discord.Embed(title="You were Muted", description="You were muted by **{1}**. \n **Reason:** {2}".format(member, ctx.message.author, reason), color=0xFF0000)
+			embed = discord.Embed(title="You were Muted", description="You were muted. \n **Reason:** {1}".format(ctx.message.author, reason), color=0xFF0000)
+			embed.set_footer(text="Moderator: "+str(ctx.author))
 			await member.send(embed=embed)
+			await ctx.message.delete()
+   
+
 
 	#Unmute a user
 	@commands.command(pass_context=True, brief="Unmutes a specified user", description="This command can only be used by Moderator+. \n Either the ID or @mention will work.")
@@ -168,10 +172,11 @@ class moderation(commands.Cog, name="Moderation"):
 		role = discord.utils.get(member.guild.roles, name="Member")
 		await member.add_roles(role)
 		embed = discord.Embed(title="User Unmuted!",
-													description="**{0}** was unmuted by **{1}**!".format(
-															member, ctx.message.author),
+													description="**{0}** was unmuted!".format(member),
 													color=0x329171)
+  		embed.set_footer(text="Moderator: "+str(ctx.author))
 		await ctx.send(embed=embed)
+		await ctx.message.delete()
 
 
 	##############---Mute/Unmute End---############
@@ -196,16 +201,25 @@ class moderation(commands.Cog, name="Moderation"):
 				await ctx.send("{0} cannot be banned.".format(member.mention))
 				return
 		if reason == None:
-				reason = "For being a jerk!"
-		message = f"You have been banned from {ctx.guild.name} for {reason}"
-		await member.send(message)
+				await ctx.send("Specify a reason.")
+				return
+
+		embed=discord.Embed(title="Member banned",
+                      description=f"You were banned.", timestamp=datetime.datetime.utcnow())
+		embed.set_footer(text="By "+str(ctx.author))
+		await member.send(embed=embed)
+  
 		await ctx.guild.ban(member, reason=reason)
-		await ctx.channel.send(f"{member} is banned!")
+  
+		embed=discord.Embed(title="Member banned", description=f"{member.mention} was banned.", timestamp=datetime.datetime.utcnow())
+		embed.set_footer(text="Moderator: "+str(ctx.author))
+		await ctx.channel.send(embed=embed)
+  		await ctx.message.delete()
 
 	#Kick a user
 	@commands.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
 	@commands.guild_only()
-	async def kick(self, ctx, member: discord.Member):
+	async def kick(self, ctx, member: discord.Member, reason=None):
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
 			return
@@ -217,22 +231,14 @@ class moderation(commands.Cog, name="Moderation"):
 		if role in member.roles or role2 in member.roles:
 			await ctx.send("{0} cannot be kicked.".format(member.mention))
 			return
-		await member.kick(reason=None)
-		await ctx.send(
-				"Kicked " + member.mention
-		)  
+		await member.kick(reason=reason)
+		embed=discord.Embed(title="Member kicked", description=f"{member.mention} was kicked.",timestamp=datetime.datetime.utcnow())
+		embed.set_footer(text="Moderator: "+str(ctx.author))
+		await ctx.send(embed=embed)  
 		await member.send("You have been kicked from the server")
+		await ctx.message.delete()
 
 			
-
-
-	###############----Misc----##################
-
-	"""
-	@commands.command(pass_context=True, brief="Timepass")
-	async def hello(ctx):
-		await ctx.send(f'Hello there {ctx.author.mention}, how are you doing?')
-		"""
 
 
 	@commands.command(pass_context=True, brief="Makes the bot send an embed in a specified channel.", description="Don't forget to use double-quotes for the title and description.")
@@ -246,6 +252,7 @@ class moderation(commands.Cog, name="Moderation"):
 		embed = discord.Embed(title=title, description=description, color=0xFF0000,timestamp=datetime.datetime.utcnow())
 		embed.set_footer(text="By "+str(ctx.author.display_name))
 		await channel.send(embed=embed)
+		await ctx.message.delete()
 
 
 	
@@ -371,7 +378,7 @@ class moderation(commands.Cog, name="Moderation"):
 			return
 		new=prev[:indn]
 		db[str(member)+"_reports"+str(ctx.guild.id)]=new
-		await ctx.send("The last case was deleted.")
+		await ctx.send(f"The last case was deleted for {member.mention}.")
 
 	@commands.command(pass_context=True, brief="Shows all the past tickets raised.", description="Shows all the past tickets raised. If a member is specified, tickets raised by the specified member will be shown.")
 	@commands.guild_only()
@@ -387,6 +394,7 @@ class moderation(commands.Cog, name="Moderation"):
 		else:
 			datab=db[str(ctx.guild.id)+str(member)+"_tickets"]
 			e=discord.Embed(title="Tickets raised by {0}".format(str(member)), description=str(datab))
+			e.set_footer(text=f"Requested by {ctx.author}")
 			await ctx.send(embed=e)
 
 
@@ -424,11 +432,14 @@ class moderation(commands.Cog, name="Moderation"):
 				str1=str1[2:]
 				str1=str1[:-1]
 				e=discord.Embed(title="Chatlogs", description=str1)
+				e.set_footer(text=f"Requested by {ctx.author}")
 				await ctx.send(embed=e)
+				
 
 		else:
 			logs=db[str(ctx.guild.id)+"ticket-"+str(ticket)+"_logs"]
 			e=discord.Embed(title="Chatlogs for ticket: {0}".format(ticket), description=str(logs))
+			e.set_footer(text=f"Requested by {ctx.author}")
 			await ctx.send(embed=e)
 
 	@commands.command(pass_context=True, brief="Closes a ticket, and stores the chatlogs in the database.")
