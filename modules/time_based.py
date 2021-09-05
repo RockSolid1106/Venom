@@ -142,7 +142,6 @@ class time_commands(commands.Cog, name="Time Based"):
 
 			embed = discord.Embed(title="Temp Unmuted", description=f"Unmuted {member.mention}.", colour=discord.Colour.light_gray())
 			await ctx.send(embed=embed)
-			print("nonmodunmute")
 
 			return
 

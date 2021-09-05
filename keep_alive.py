@@ -8,17 +8,25 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 
-from flask import Flask, render_template, make_response
+from flask import Flask, render_template, make_response, request
 from threading import Thread
 
 
 app = Flask('')
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def main():
 		resp = "Hey"
-		
+		user_agent = request.headers.get('User-Agent')
+		user_agent = user_agent.lower()
+		print(user_agent)
+		if "iphone" in user_agent or "android" in user_agent:
+			return render_template('mobile.html')
+		else:
+			return render_template('dashboard.html')
 		return resp 
+
+
 
 def run():
     app.run(host="0.0.0.0", port=8080)

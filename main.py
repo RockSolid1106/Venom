@@ -3,6 +3,9 @@
 #
 #This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
+#------------#
+
+
 #Use this code in the shell if the script is running with two instances: pkill -9 python
 #pip install -U git+https://github.com/Rapptz/discord.py
 #pip3 install --upgrade discord-components
@@ -25,8 +28,6 @@ print("This is the PRODUCTION version.")
 client = commands.Bot(command_prefix="!")
 keep_alive()
 
-client.deletedmessages=list()
-
 @client.command()
 @commands.guild_only()
 async def ping(ctx, no_pm=True):
@@ -38,8 +39,7 @@ async def cogstat(ctx):
 		await ctx.send("You dont have the permission to use this command.")
 		return
 	loadedcogs=""
-	for NameOfCog,TheClassOfCog in client.cogs.items(): # we can 
-		print(NameOfCog)
+	for NameOfCog,TheClassOfCog in client.cogs.items():
 		loadedcogs=loadedcogs+"\n"+NameOfCog
 	await ctx.send("Here are the loaded cogs:```"+loadedcogs+"```")
 

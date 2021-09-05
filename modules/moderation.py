@@ -100,10 +100,11 @@ class moderation(commands.Cog, name="Moderation"):
 		overwrite.send_messages = False
 		await channel.set_permissions(role, overwrite=overwrite)
 		embed=discord.Embed(
-		title="Channel Locked",	description="This channel is now closed to further messages.", color=0xFF0000, timestamp=datetime.datetime.utcnow())
+		title="Channel Locked",	description="<a:redloading:880656122254598144>This channel is now closed to further messages.<a:redloading:880656122254598144>", color=0xFF0000, timestamp=datetime.datetime.utcnow())
 		embed.add_field(name="Reason", value="{0}".format(reason), inline=False)
 		embed.set_footer(text="By "+str(ctx.author))
 		await channel.send(embed=embed)
+		await ctx.message.delete()
 
 	#Unlock a Channel
 	@commands.command(pass_context=True, brief="Unlocks a channel", description="This command can only be used by Moderator+. \n The channel field can be left empty if you want to unlock the current channel.")
@@ -124,6 +125,7 @@ class moderation(commands.Cog, name="Moderation"):
 		embed.set_footer(text="By "+str(ctx.author))
 
 		await channel.send(embed=embed)
+		await ctx.message.delete()
 
 	#Mute a user
 	@commands.command(pass_context=True, brief="Mutes a specified user", description="This command can only be used by Moderator+. \n Either the ID or @mention will work.")
@@ -237,7 +239,7 @@ class moderation(commands.Cog, name="Moderation"):
 	@commands.guild_only()
 	#@commands.has_permissions(manage_messages=True)
 	async def say(self, ctx, channel: discord.TextChannel, title, description):
-		description=description+"<a:redloading:880656122254598144>"
+		description=description#+"<a:redloading:880656122254598144>"
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
 			return
