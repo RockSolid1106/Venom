@@ -34,6 +34,15 @@ class admin(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 			await ctx.send("You don't have permission to use this command.")
 		error=errordic[ctx.guild.id+ctx.channel.id]
 		await ctx.send("Here is the last error: ```"+str(error)+"```")
+	
+	@commands.command()
+	async def whoami(self, ctx):
+		if ctx.author.id!=825282868028375062:# and ctx.author.id==820189220185833472:
+			await ctx.send(f"{ctx.author.mention} is my developer. He has got access to all the commands, just so you know.")
+		elif ctx.author.id==820189220185833472:
+			await ctx.send(f"{ctx.author.mention} is my co-developer. He has got access to all the commands, just so you know.")
+		else:
+			await ctx.send("You're just the average human.")
 		
 		
 
