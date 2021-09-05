@@ -174,7 +174,7 @@ class moderation(commands.Cog, name="Moderation"):
 		embed = discord.Embed(title="User Unmuted!",
 													description="**{0}** was unmuted!".format(member),
 													color=0x329171)
-  		embed.set_footer(text="Moderator: "+str(ctx.author))
+		embed.set_footer(text="Moderator: "+str(ctx.author))
 		await ctx.send(embed=embed)
 		await ctx.message.delete()
 
@@ -214,7 +214,7 @@ class moderation(commands.Cog, name="Moderation"):
 		embed=discord.Embed(title="Member banned", description=f"{member.mention} was banned.", timestamp=datetime.datetime.utcnow())
 		embed.set_footer(text="Moderator: "+str(ctx.author))
 		await ctx.channel.send(embed=embed)
-  		await ctx.message.delete()
+		await ctx.message.delete()
 
 	#Kick a user
 	@commands.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
