@@ -30,10 +30,16 @@ class member(commands.Cog, name="Member"):
 		
 		role = discord.utils.get(ctx.guild.roles, name="Member")
 		role2 = discord.utils.get(ctx.guild.roles, name="Moderator")
+		role3 = discord.utils.get(ctx.guild.roles, name="Owner")
+		role4 = discord.utils.get(ctx.guild.roles, name="Admin")
 		db[str(ctx.guild.id)+'tokenno']=int(db[str(ctx.guild.id)+'tokenno'])+1
 		channel = await ctx.guild.create_text_channel('ticket-'+str(db[str(ctx.guild.id)+"tokenno"]), sync_permissions=False, category=category)
 		await channel.set_permissions(ctx.author, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
 		await channel.set_permissions(role2, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
+		try:
+			await channel.set_permissions(role3, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
+		except:
+			await channel.set_permissions(role4, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
 		await channel.set_permissions(role, read_messages=False)
 		await channel.set_permissions(ctx.guild.default_role, read_messages=False)
 		

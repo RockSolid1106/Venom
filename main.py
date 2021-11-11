@@ -16,6 +16,7 @@ import pyotp
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
+from discord.ext.commands import Bot
 import time
 from replit import db
 import os
@@ -25,8 +26,12 @@ import random
 print(discord.__version__)
 print("This is the PRODUCTION version.")
 
+
 client = commands.Bot(command_prefix="!")
 keep_alive()
+
+Bot.adminroles = ["Admin", "Administrator", "Owner", "Administrators"]
+Bot.modroles = ["Moderator", "Mod", "Moderators"]
 
 @client.command()
 @commands.guild_only()
@@ -108,6 +113,9 @@ async def roast(ctx, *, member: discord.Member):
 @client.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
 @commands.guild_only()
 async def report(ctx, member: discord.Member, reason=None):
+	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+		await ctx.send("{0} cannot be reported.".format(member.mention))
+		return
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 	role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
 	if role in member.roles or role2 in member.roles:
@@ -230,7 +238,27 @@ async def reload(ctx, module=None):
 	await ctx.send(f"Succesfully reloaded ```{module}```")
 
 
+@client.command()
+async def changeperm(ctx, role, permission, state):
+	print("Hello")
+	if ctx.author.id!=825282868028375062 and ctx.author.id!=820189220185833472:
+		await ctx.send("You are not authorized to use this administrator command.")
+		return
+	role = discord.utils.get(ctx.guild.roles, name=role)
+	perm = discord.Permissions()
+	if "prio" in permission:
+		if "tr" in state: 
+			perm.update(priority_speaker=True)
+		else:
+			perm.update(priority_speaker=False)
+	elif "managethreads" in permission:
+		if "tr" in state:
+			perm.update(manage_threads = True)
+		else:
+			perm.update(manage_threads = False)
 
+	
+	await role.edit(permission=perm)
 
 
 

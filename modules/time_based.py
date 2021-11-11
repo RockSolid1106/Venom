@@ -8,10 +8,12 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from replit import db
+from discord.ext.commands import Bot
 #from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
 client=commands.Bot(command_prefix="!")
 class time_commands(commands.Cog, name="Time Based"):
+
 	def __init__(self, client: commands.Bot):
 		self.client = commands.Bot(command_prefix="!")
 
@@ -19,29 +21,37 @@ class time_commands(commands.Cog, name="Time Based"):
 	def admincheck(self, ctx):
 		if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
 			return True
-		role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-		role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
-		if role in ctx.author.roles or role2 in ctx.author.roles:
-			return True
-		else:
-			return False
+		for x in Bot.adminroles:
+			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+			
+			if role in ctx.author.roles:
+				return True
+			else:
+				return False
 
 	def modcheck(self, ctx):
 		if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
 			return True
-		role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-		role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
-		role3 = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
-		if role in ctx.author.roles or role2 in ctx.author.roles or role3 in ctx.author.roles:
-			return True
-		else:
-			return False
+		for x in Bot.modroles:
+			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+			
+			if role in ctx.author.roles:
+				return True
+			else:
+				return False
+		for x in Bot.adminroles:
+			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+			
+			if role in ctx.author.roles:
+				return True
+			else:
+				return False				
 
 	@commands.command(pass_context=True, brief="Mutes a user for specified time.", description="Mutes a user for specified time. \nExample: !tempmute @someone 10m \"test\" \nAccepted units of time are: s(Seconds), m(Months *cough cough* Minutes) and d(Days).")
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
 	async def tempmute(self, ctx, member: discord.Member, time, reason=None):
 			if self.modcheck(ctx)==False:
-				await ctx.send("Tryna use mod commands huh?")
+				await ctx.send("This command is reserved for moderator+")
 				return
 			if member.id==825282868028375062 or member.id==820189220185833472:
 				await ctx.send("This user cannot be temp-muted.")
@@ -63,7 +73,8 @@ class time_commands(commands.Cog, name="Time Based"):
 			d=unitoftime
 			role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 			role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-			if role2 in ctx.author.roles or ctx.author.id==825282868028375062:
+			#if role2 in ctx.author.roles or ctx.author.id==825282868028375062:
+			if self.admincheck(ctx):
 				elevperms=True
 
 			if role in member.roles:# or role2 in member.roles:

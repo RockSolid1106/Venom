@@ -11,8 +11,6 @@ import time
 import os
 import datetime
 import random
-from pymongo import MongoClient
-import pymongo
 from dateutil import parser
 
 client=commands.Bot(command_prefix="!")
@@ -21,7 +19,7 @@ class member(commands.Cog, name="Member"):
 		self.client = commands.Bot(command_prefix="!")
 	
 
-
+"""
 	@commands.Cog.listener()
 	async def on_message_delete(self, message):
 		async for entry in message.guild.audit_logs(limit=5,action=discord.AuditLogAction.message_delete):
@@ -29,6 +27,7 @@ class member(commands.Cog, name="Member"):
 		print(f"{deleter.name} deleted message a by {message.author.name}. Content: {message.content}")
 		file1 = open("MyFile.txt","a")
 		file1.write(f"{deleter.name} deleted a message posted by {message.author}: {message.content}")
+		"""
 
 	
 

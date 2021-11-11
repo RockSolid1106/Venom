@@ -15,26 +15,35 @@ class moderation(commands.Cog, name="Moderation"):
 	def __init__(self, client: commands.Bot):
 		self.client = commands.Bot(command_prefix="!")
 	
-	def admincheck(self, ctx):
-		if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
-			return True
-		role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-		role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
-		if role in ctx.author.roles or role2 in ctx.author.roles:
-			return True
-		else:
-			return False
+		def admincheck(self, ctx):
+			if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+				return True
+			for x in Bot.adminroles:
+				role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+				
+				if role in ctx.author.roles:
+					return True
+				else:
+					return False
 
-	def modcheck(self, ctx):
-		if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
-			return True
-		role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-		role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
-		role3 = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
-		if role in ctx.author.roles or role2 in ctx.author.roles or role3 in ctx.author.roles:
-			return True
-		else:
-			return False
+		def modcheck(self, ctx):
+			if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+				return True
+			for x in Bot.modroles:
+				role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+				
+				if role in ctx.author.roles:
+					return True
+				else:
+					return False
+			for x in Bot.adminroles:
+				role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+				
+				if role in ctx.author.roles:
+					return True
+				else:
+					return False				
+
 
 	@commands.command(pass_context=True, description="This command can only be used by Server Owners.", brief="Makes a user a Moderator. Can be only used by Owners.")
 	@commands.guild_only()
