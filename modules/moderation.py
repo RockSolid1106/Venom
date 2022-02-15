@@ -8,6 +8,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from replit import db
 import datetime
+from discord.ext.commands import Bot
 #from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
 client=commands.Bot(command_prefix="!")
@@ -15,34 +16,32 @@ class moderation(commands.Cog, name="Moderation"):
 	def __init__(self, client: commands.Bot):
 		self.client = commands.Bot(command_prefix="!")
 	
-		def admincheck(self, ctx):
-			if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+	def admincheck(self, ctx):
+		if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+			return True
+		for x in Bot.adminroles:
+			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+			
+			if role in ctx.author.roles:
 				return True
-			for x in Bot.adminroles:
-				role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
-				
-				if role in ctx.author.roles:
-					return True
-				else:
-					return False
 
-		def modcheck(self, ctx):
-			if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+		print(str(ctx.author)+" tried to use an admin command. Command: "+ctx.message.content)
+
+		return False
+
+	def modcheck(self, ctx):
+		if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+			return True
+		for x in Bot.modroles:
+			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+			
+			if role in ctx.author.roles:
 				return True
-			for x in Bot.modroles:
-				role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+		print(str(ctx.author)+" tried to use a mod command. Command: "+ctx.message.content)
+			
+		return False
 				
-				if role in ctx.author.roles:
-					return True
-				else:
-					return False
-			for x in Bot.adminroles:
-				role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
-				
-				if role in ctx.author.roles:
-					return True
-				else:
-					return False				
+						
 
 
 	@commands.command(pass_context=True, description="This command can only be used by Server Owners.", brief="Makes a user a Moderator. Can be only used by Owners.")
@@ -140,7 +139,7 @@ class moderation(commands.Cog, name="Moderation"):
 	@commands.command(pass_context=True, brief="Mutes a specified user", description="This command can only be used by Moderator+. \n Either the ID or @mention will work.")
 	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
-	async def mute(self, ctx, member: discord.Member, reason=None):
+	async def mute(self, ctx, member: discord.Member, *, reason=None):
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
 			return
@@ -194,7 +193,7 @@ class moderation(commands.Cog, name="Moderation"):
 	@commands.command(pass_context=True, brief="Bans a specified user", description="Use this command on your own discretion. A ban should be a last resort. Try using the mute/kick command before this command. Should the user commit a very grave crime, this command be used.")
 	@commands.guild_only()
 	#@commands.has_any_role("Moderator", "Owner", "Admin")
-	async def ban(self, ctx, member: discord.Member = None, reason=None):
+	async def ban(self, ctx, member: discord.Member = None, *, reason=None):
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
 			return
@@ -204,11 +203,15 @@ class moderation(commands.Cog, name="Moderation"):
 		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
 			await ctx.send("This user cannot be banned.")
 			return
-		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
-		role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-		if role in member.roles or role2 in member.roles:
-				await ctx.send("{0} cannot be banned.".format(member.mention))
-				return
+
+		mod = False
+		for x in Bot.modroles:
+			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+			if role in member.roles:
+				mod = True
+		if mod:
+			await ctx.send("{0} is a moderator/admin.".format(member.mention))
+			return
 		if reason == None:
 				await ctx.send("Specify a reason.")
 				return
@@ -228,23 +231,30 @@ class moderation(commands.Cog, name="Moderation"):
 	#Kick a user
 	@commands.command(pass_context=True, brief="Kicks a user.", description="Can only be used by Moderator+.")
 	@commands.guild_only()
-	async def kick(self, ctx, member: discord.Member, reason=None):
+	async def kick(self, ctx, member: discord.Member, *, reason=None):
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command.")
 			return
 		if member.id==825282868028375062 or member.id==820189220185833472 or member.id==859310919095943169:
 			await ctx.send("This user cannot be kicked.")
 			return			
-		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
-		role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-		if role in member.roles or role2 in member.roles:
-			await ctx.send("{0} cannot be kicked.".format(member.mention))
+
+		mod = False
+		for x in Bot.modroles:
+			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+			if role in member.roles:
+				mod = True
+		if mod:
+			await ctx.send("{0} is a moderator/admin.".format(member.mention))
 			return
 		await member.kick(reason=reason)
 		embed=discord.Embed(title="Member kicked", description=f"{member.mention} was kicked.",timestamp=datetime.datetime.utcnow())
 		embed.set_footer(text="Moderator: "+str(ctx.author))
 		await ctx.send(embed=embed)  
-		await member.send("You have been kicked from the server")
+		try:
+			await member.send("You have been kicked from the server")
+		except:
+			pass
 		await ctx.message.delete()
 
 			
@@ -328,6 +338,7 @@ class moderation(commands.Cog, name="Moderation"):
 			return
 		role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
 		role2 = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
+		
 		if role in member.roles or role2 in member.roles:
 			await ctx.send("{0} cannot be warned.".format(member.mention))
 			return
@@ -522,6 +533,29 @@ class moderation(commands.Cog, name="Moderation"):
 		
 		await ctx.send("Here are the last few deleted messages:```"+message+"```")
 	
+	@commands.command()
+	@commands.guild_only()
+	async def react(self, ctx, messageid, r1=None, r2=None, r3=None, r4=None, r5=None, r6=None, r7=None, r8=None, r9=None, r10=None):
+		if self.modcheck(ctx)==False:
+			await ctx.send("This is a moderator+ command.")
+			return
+		msg = await ctx.fetch_message(messageid)
+		lst=[r1]
+		lst.append(r2)
+		lst.append(r3)
+		lst.append(r4)
+		lst.append(r5)
+		lst.append(r6)
+		lst.append(r7)
+		lst.append(r8)
+		lst.append(r9)
+		lst.append(r10)
+		for x in lst:
+			if x==None:
+					continue   
+			await msg.add_reaction(x)
+
+		
 
 
 

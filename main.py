@@ -31,7 +31,7 @@ client = commands.Bot(command_prefix="!")
 keep_alive()
 
 Bot.adminroles = ["Admin", "Administrator", "Owner", "Administrators"]
-Bot.modroles = ["Moderator", "Mod", "Moderators"]
+Bot.modroles = ["Moderator", "Mod", "Moderators", "Admin", "Administrator", "Owner", "Administrators"]
 
 @client.command()
 @commands.guild_only()
@@ -48,26 +48,31 @@ async def cogstat(ctx):
 		loadedcogs=loadedcogs+"\n"+NameOfCog
 	await ctx.send("Here are the loaded cogs:```"+loadedcogs+"```")
 
-def admincheck(self, ctx):
-	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
-		return True
-	role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-	role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
-	if role in ctx.author.roles or role2 in ctx.author.roles:
-		return True
-	else:
+	def admincheck(ctx):
+		if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+			return True
+		for x in Bot.adminroles:
+			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+			
+			if role in ctx.author.roles:
+				return True
+	
+		print(str(ctx.author)+" tried to use an admin command. Command: "+ctx.message.content)
+
 		return False
 
-def modcheck(self, ctx):
-	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
-		return True
-	role = discord.utils.find(lambda r: r.name == 'Owner', ctx.message.guild.roles)
-	role2 = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.guild.roles)
-	role3 = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
-	if role in ctx.author.roles or role2 in ctx.author.roles or role3 in ctx.author.roles:
-		return True
-	else:
-		return False
+	def modcheck(ctx):
+		if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+			return True
+		for x in Bot.modroles:
+			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
+			
+			if role in ctx.author.roles:
+				return True
+		print(str(ctx.author)+" tried to use a mod command. Command: "+ctx.message.content)
+			
+		return False	
+
 
 
 
@@ -113,7 +118,7 @@ async def roast(ctx, *, member: discord.Member):
 @client.command(pass_context=True, brief="Will notify the Moderators. Abuse will result in moderation.")
 @commands.guild_only()
 async def report(ctx, member: discord.Member, reason=None):
-	if ctx.author.id==825282868028375062 or ctx.author.id==820189220185833472:
+	if member.id==825282868028375062 or member.id==820189220185833472:
 		await ctx.send("{0} cannot be reported.".format(member.mention))
 		return
 	role = discord.utils.find(lambda r: r.name == 'Moderator', ctx.message.guild.roles)
@@ -187,6 +192,7 @@ async def setupbot(ctx, mcid=None, scid=None):
 	await ctx.send(db[str(ctx.guild.id)+"_scid"])
 	db[str(ctx.guild.id)+"_mcid"]=mcid
 	await ctx.send("The Moderator channel ID was set successfully.")
+	db[str(ctx.guild.id)+"tokenno"]=0
 	await ctx.send(db[str(ctx.guild.id)+"_mcid"])
 
 @client.command()

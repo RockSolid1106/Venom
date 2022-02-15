@@ -25,6 +25,7 @@ class roles(commands.Cog, name="Reaction Roles"):
 
 	@commands.Cog.listener()
 	async def on_raw_reaction_add(self, payload):
+		print(payload.emoji)
 		member=payload.member
 		demojized=emoji.demojize(str(payload.emoji))
 		print(demojized)
