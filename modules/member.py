@@ -45,7 +45,7 @@ class member(commands.Cog, name="Member"):
 		# await channel.set_permissions(ctx.author, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
 
 		# await channel.set_permissions(role2, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
-		for x in Bot.adminroles:
+		for x in Bot.modroles:
 			role = discord.utils.find(lambda r: r.name == x, ctx.message.guild.roles)
 			try: 
 				await channel.set_permissions(role, send_messages=True, read_messages=True, add_reactions=True, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
@@ -54,6 +54,7 @@ class member(commands.Cog, name="Member"):
 		role = discord.utils.get(ctx.guild.roles, name="Member")
 		await channel.set_permissions(role, read_messages=False)
 		await channel.set_permissions(ctx.guild.default_role, read_messages=False)
+		await channel.set_permissions(ctx.author, send_messages=True, read_messages=True, add_reactions=False, embed_links=True, attach_files=True, read_message_history=True, external_emojis=True)
 		
 		await channel.send("A moderator/owner will be with you shortly.")
 		e=discord.Embed(title="Description for ticket", description=reason)

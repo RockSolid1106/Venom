@@ -8,20 +8,15 @@ import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-import time
+from discord.ext.commands import Bot
 from replit import db
-import os
-from keep_alive import keep_alive
-import datetime
-import random
 #from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
-import hmac, base64, struct, hashlib, array
 errordic={}
 client=commands.Bot(command_prefix="!")
 class admin(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 	errordic={}
 	def __init__(self, client: commands.Bot):
-		self.client = commands.Bot(command_prefix="!")
+		self.client = client
 	
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
@@ -44,12 +39,58 @@ class admin(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 			await ctx.send(f"{ctx.author.mention} is my developer. He has got access to all the commands, even if he doesn't have the roles, just so you know.")
 		elif ctx.author.id==820189220185833472:
 			await ctx.send(f"{ctx.author.mention} is my co-developer. He has got access to all the commands, even if he doesn't have the roles, just so you know.")
+		elif ctx.author.id==822679233720745984:
+			await ctx.send(f"{ctx.author.mention} is poggers")
 		else:
 			await ctx.send("You're just the average human.")
-		
-		
 
 
+	@commands.command()
+	async def changestatus(self, ctx, status, activity_type, activity):
+		if ctx.author.id!=825282868028375062 and ctx.author.id!=820189220185833472:
+			await ctx.send("You don't have permission to use this command.")
+			return
+		if status == "idle":
+			if activity_type == "listening":
+				await self.client.change_presence(status = discord.Status.idle,activity=discord.Activity(type=discord.ActivityType.listening, name=activity))
+			elif activity_type == "playing":
+				await self.client.change_presence(status = discord.Status.idle,activity=discord.Activity(type=discord.ActivityType.playing, name=activity))
+			elif activity_type == "watching":
+				await self.client.change_presence(status = discord.Status.idle,activity=discord.Activity(type=discord.ActivityType.watching, name=activity))
+
+		if status == "dnd" or status == "DND":
+			if activity_type == "listening":
+				await self.client.change_presence(status = discord.Status.dnd,activity=discord.Activity(type=discord.ActivityType.listening, name=activity))
+			elif activity_type == "playing":
+				await self.client.change_presence(status = discord.Status.dnd,activity=discord.Activity(type=discord.ActivityType.playing, name=activity))
+			elif activity_type == "watching":
+				await self.client.change_presence(status = discord.Status.dnd,activity=discord.Activity(type=discord.ActivityType.watching, name=activity))
+				
+		if status == "offline":
+			if activity_type == "listening":
+				await self.client.change_presence(status = discord.Status.offline,activity=discord.Activity(type=discord.ActivityType.listening, name=activity))
+			elif activity_type == "playing":
+				await self.client.change_presence(status = discord.Status.offline,activity=discord.Activity(type=discord.ActivityType.playing, name=activity))
+			elif activity_type == "watching":
+				await self.client.change_presence(status = discord.Status.offline,activity=discord.Activity(type=discord.ActivityType.watching, name=activity))
+
+		if status == "online":
+			if activity_type == "listening":
+				await self.client.change_presence(status = discord.Status.online,activity=discord.Activity(type=discord.ActivityType.listening, name=activity))
+			elif activity_type == "playing":
+				await self.client.change_presence(status = discord.Status.online,activity=discord.Activity(type=discord.ActivityType.playing, name=activity))
+			elif activity_type == "watching":
+				await self.client.change_presence(status = discord.Status.online,activity=discord.Activity(type=discord.ActivityType.watching, name=activity))
+
+		if status == "invisible":
+			if activity_type == "listening":
+				await self.client.change_presence(status = discord.Status.invisible,activity=discord.Activity(type=discord.ActivityType.listening, name=activity))
+			elif activity_type == "playing":
+				await self.client.change_presence(status = discord.Status.invisible,activity=discord.Activity(type=discord.ActivityType.playing, name=activity))
+			elif activity_type == "watching":
+				await self.client.change_presence(status = discord.Status.invisible,activity=discord.Activity(type=discord.ActivityType.watching, name=activity))
+
+	
 
 
 def setup(client: commands.Bot):

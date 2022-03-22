@@ -27,11 +27,15 @@ print(discord.__version__)
 print("This is the PRODUCTION version.")
 
 
-client = commands.Bot(command_prefix="!")
+client = commands.Bot(command_prefix="!", activity=discord.Activity(
+	    type=discord.ActivityType.listening, name="everything you say!"),
+										 status = discord.Status.online)
 keep_alive()
 
-Bot.adminroles = ["Admin", "Administrator", "Owner", "Administrators"]
-Bot.modroles = ["Moderator", "Mod", "Moderators", "Admin", "Administrator", "Owner", "Administrators"]
+Bot.adminroles = ["Admin", "Administrator", "Owner", "Administrators", "Administrators 👨‍💻"]
+Bot.modroles = ["Moderator", "Mod", "Moderators", "Admin", "Administrator", "Owner", "Administrators", "Moderators 🔨"]
+Bot.delmessages = {}
+Bot.editmessages = {}
 
 @client.command()
 @commands.guild_only()
@@ -99,14 +103,11 @@ async def ping_error(ctx, error):
 @client.command()
 @commands.guild_only()
 async def roast(ctx, *, member: discord.Member):
-    if ctx.author.id == 825282868028375062 or ctx.author.id==820189220185833472:
-        responses = ['You’re my favorite person besides every other person I’ve ever met.',
-                     'I envy people who have never met you.',
-                     'You’re not the dumbest person on the planet, but you sure better hope he doesn’t die.',
-                     'I\'d say your aim is cancer but cancer actually kills people']
-        await ctx.send(f"Hey {member.mention} {random.choice(responses)}")
-    else:
-        return	
+	responses = ['You’re my favorite person besides every other person I’ve ever met.','I envy people who have never met you.','You’re not the dumbest person on the planet, but you sure better hope he doesn’t die.','I\'d say your aim is cancer but cancer actually kills people']
+	if ctx.author.id == 825282868028375062 or ctx.author.id==820189220185833472:
+		await ctx.send(f"Hey {member.mention} {random.choice(responses)}")
+	else:
+		await ctx.send(f"Hey {ctx.author.mention} {random.choice(responses)}")	
 
 ###################-------Misc END-------------####################
 
@@ -266,14 +267,29 @@ async def changeperm(ctx, role, permission, state):
 	
 	await role.edit(permission=perm)
 
+@client.command()
+async def disablecommand(ctx, command_name):
+	if ctx.author.id!=825282868028375062 and ctx.author.id!=820189220185833472:
+		await ctx.send("You don't have permission to use this command.")
+		return
+	command = client.get_command(command_name)
+	command.update(enabled=False)
+	await ctx.send("Command disabled.")
 
+@client.command()
+async def enablecommand(ctx, command_name):
+	if ctx.author.id!=825282868028375062 and ctx.author.id!=820189220185833472:
+		await ctx.send("You don't have permission to use this command.")
+		return
+	command = client.get_command(command_name)
+	command.update(enabled=True)
+	await ctx.send("Command enabled.")
 
 @client.event
 async def on_ready():
 	print('Logged in as {0.user}'.format(client))
 	print(discord.__version__)
-	await client.change_presence(activity=discord.Activity(
-	    type=discord.ActivityType.listening, name="everything you say!"))
+
 	print("Copyright © 2021  RockSolid1106. \nThis program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it, provided that you credit RockSolid1106.")
 	client.load_extension(f"modules.moderation")
 	client.load_extension(f"modules.member")
@@ -281,11 +297,23 @@ async def on_ready():
 	#client.load_extension(f"modules.chatfilter")
 	client.load_extension(f"modules.reactionroles")
 	client.load_extension(f"modules.administrator")
+	client.load_extension(f"modules.logger")
 	#DiscordComponents(client, change_discord_methods=True)
 	
-	
-	
 
+
+@client.event
+async def on_command_error(ctx, error):
+	if isinstance(error, commands.DisabledCommand):
+		await ctx.send("This command has been disabled. You may not use it until it has been enabled again.")
+	elif isinstance(error, commands.MissingRequiredArgument):
+		await ctx.send("A required parameter is missing.")
+	elif isinstance(error, commands.MemberNotFound):
+		await ctx.send("The member specified was not found.")
+	elif isinstance(error, commands.UserNotFound):
+		await ctx.send("The member specified was not found.")
+	elif isinstance(error, commands.ExtensionNotFound):
+		await ctx.send("The extension was not found.")
 
 
 

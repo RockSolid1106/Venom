@@ -1,4 +1,4 @@
-#Copyright © 2021  RockSolid1106
+#Copyright © 2022  RockSolid1106
 #This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License.
 #
 #This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -219,7 +219,10 @@ class moderation(commands.Cog, name="Moderation"):
 		embed=discord.Embed(title="Member banned",
                       description=f"You were banned.", timestamp=datetime.datetime.utcnow())
 		embed.set_footer(text="By "+str(ctx.author))
-		await member.send(embed=embed)
+		try:
+			await member.send(embed=embed)
+		except:
+			pass
   
 		await ctx.guild.ban(member, reason=reason)
   
@@ -514,25 +517,62 @@ class moderation(commands.Cog, name="Moderation"):
 		await ctx.send(db[str(ctx.guild.id)+"_mcid"])
 
 	
-	@commands.command()
-	async def snipe(self, ctx, number=5):
+	@commands.command(pass_context=True, description="This command shows the last 5 deleted messages.")
+	@commands.guild_only()
+	async def snipe(self, ctx, number=5, dm=False):
+
 		if self.modcheck(ctx)==False:
 			await ctx.send("This is a moderator command")
 			return
-		info=db['delmessages'+str(ctx.guild.id)[3]]
-		message=""
-		x=0
-		counter=db['delmessagescount'+str(ctx.guild.id)]
-		while x<counter:
-			x=x+1
-			#print(x)
-			#print(db['delmessages'+str(ctx.guild.id)[x]])
-			message=message+db['delmessages'+str(ctx.guild.id)[x]]
+		messages = ""
+		if not (str(ctx.guild.id) + "_" + str(ctx.channel.id)) in Bot.delmessages or Bot.delmessages[(str(ctx.guild.id) + "_" + str(ctx.channel.id))] == []:
+			await ctx.send("No deleted messages were recorded.")
+			return
+
+		if number >= len(Bot.delmessages[(str(ctx.guild.id) + "_" + str(ctx.channel.id))]):
+			number = len(Bot.delmessages[(str(ctx.guild.id) + "_" + str(ctx.channel.id))])
+			await ctx.send("*The number specified exceeds the number of logs recorded, or is greater than the log capacity. Displaying the maximum deletions possible.*")
+		num = 0
+		while num < number:
+			x = Bot.delmessages[str(ctx.guild.id) + "_" + str(ctx.channel.id)][num]
+			messages = "```• " + x + "```\n" + messages
+			num = num + 1
 		
+		if dm == True:
+			await ctx.author.send("Here are the last five deleted messages in this channel:"+messages)
+		else:
+			await ctx.send("Here are the last five deleted messages in this channel:"+messages)
+
+
+	@commands.command(pass_context=True, description="This command shows the last 5 deleted messages.")
+	@commands.guild_only()
+	async def editsnipe(self, ctx, msgid, dm=False):
+
+		if self.modcheck(ctx)==False:
+			await ctx.send("This is a moderator command")
+			return
+		message = ""
+		for x in Bot.editmessages[msgid]:
+			message = "```• " + x + "```\n" + message
 		
+		if dm==True:
+			await ctx.author.send("Here are the edits for this message:"+message)
+		else:
+			await ctx.send("Here are the edits for this message:"+message)
+
+
+
+
+	@commands.command(pass_context=True, description="This command clears the deletions log for a particular channel.")
+	@commands.guild_only()
+	async def cleardellog(self, ctx):
+		if self.admincheck(ctx)==False:
+			await ctx.send("This is an administrator command")
+			return
+		Bot.delmessages[str(ctx.guild.id) + "_" + str(ctx.channel.id)] = []
+		await ctx.send("Deletions log cleared.")
+
 		
-		await ctx.send("Here are the last few deleted messages:```"+message+"```")
-	
 	@commands.command()
 	@commands.guild_only()
 	async def react(self, ctx, messageid, r1=None, r2=None, r3=None, r4=None, r5=None, r6=None, r7=None, r8=None, r9=None, r10=None):
